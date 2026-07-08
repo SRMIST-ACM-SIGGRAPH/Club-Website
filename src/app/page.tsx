@@ -1,6 +1,9 @@
 import { HeroSection } from '@/components/sections/HeroSection';
 import { AboutSection } from '@/components/sections/AboutSection';
 import { TeamSection } from '@/components/sections/TeamSection';
+import { ContactSection } from '@/components/sections/ContactSection';
+import { EventsSection } from '@/components/sections/EventsSection';
+import { ProjectsSection } from '@/components/sections/ProjectsSection';
 
 export default function Home() {
   return (
@@ -12,27 +15,14 @@ export default function Home() {
       
       <TeamSection />
 
-      {/* Events section */}
-      <section
-        id="events"
-        className="relative min-h-[50vh] flex items-center justify-center"
-        style={{ background: 'transparent' }}
-      >
-        <div className="text-center">
-          <p className="text-neutral-600 tracking-widest text-xs uppercase" style={{ fontFamily: 'var(--font-geist-mono)' }}>— Events —</p>
-        </div>
-      </section>
+      {/* Events section (Client Component with Framer Motion Modals) */}
+      <EventsSection />
 
-      {/* Projects section */}
-      <section
-        id="projects"
-        className="relative min-h-[50vh] flex items-center justify-center"
-        style={{ background: 'transparent' }}
-      >
-        <div className="text-center">
-          <p className="text-neutral-600 tracking-widest text-xs uppercase" style={{ fontFamily: 'var(--font-geist-mono)' }}>— Projects —</p>
-        </div>
-      </section>
+      {/* Projects section (Client Component with GSAP Stack & Framer Motion Modal) */}
+      <ProjectsSection />
+
+      
+      <ContactSection />
     </main>
   );
 }

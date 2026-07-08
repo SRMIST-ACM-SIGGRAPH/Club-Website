@@ -56,13 +56,13 @@ export function AboutSection() {
   }, []);
 
   return (
-    <section
-      id="about"
-      ref={containerRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
-      style={{ background: 'transparent' }}
-    >
-      <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
+    <div id="about" className="relative w-full">
+      <section
+        ref={containerRef}
+        className="relative min-h-screen flex items-center justify-center overflow-hidden"
+        style={{ background: 'transparent' }}
+      >
+        <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
         
         {/* Left: Image */}
         <div className="flex justify-center md:justify-end">
@@ -103,6 +103,7 @@ export function AboutSection() {
         </div>
 
       </div>
-    </section>
+      </section>
+    </div>
   );
 }

@@ -1,6 +1,14 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+// Register GSAP plugin
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 // --- Icons ---
 const InstagramIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -26,7 +34,6 @@ const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 // --- Dummy Data ---
-// In a real project, replace these placeholder images with the actual team photos.
 const P_PHOTO = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400&auto=format&fit=crop";
 const M_PHOTO = "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=400&auto=format&fit=crop";
 
@@ -79,41 +86,15 @@ const teamData = {
 
 // --- Components ---
 
-function Divider({ text }: { text: string }) {
-  return (
-    <motion.div 
-      initial={{ opacity: 0, scaleX: 0 }}
-      whileInView={{ opacity: 1, scaleX: 1 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.8, ease: "easeInOut" }}
-      className="relative flex items-center justify-center mt-24 mb-16"
-    >
-      <div className="absolute w-full h-[1px] bg-gradient-to-r from-transparent via-[#FF6B1A] to-transparent opacity-50 shadow-[0_0_10px_#FF6B1A]" />
-      <h2 className="relative px-6 bg-[#050505]/80 backdrop-blur-md font-mono text-2xl tracking-widest text-[#FF6B1A] uppercase" style={{ textShadow: '0 0 15px rgba(255,107,26,0.6)' }}>
-        {text}
-      </h2>
-    </motion.div>
-  );
-}
-
-function PersonCard({ person, size = 'medium', delay = 0 }: { person: any, size?: 'large' | 'medium' | 'small', delay?: number }) {
+function PersonCard({ person, size = 'medium', className = '' }: { person: any, size?: 'large' | 'medium' | 'small', className?: string }) {
   const sizeClasses = {
-    large: 'w-48 h-48 md:w-56 md:h-56',
-    medium: 'w-36 h-36 md:w-40 md:h-40',
-    small: 'w-24 h-24 md:w-28 md:h-28',
+    large: 'w-40 h-40 md:w-48 md:h-48',
+    medium: 'w-28 h-28 md:w-32 md:h-32',
+    small: 'w-20 h-20 md:w-24 md:h-24',
   };
 
-  const animDuration = size === 'large' ? 0.9 : 0.6;
-  const initialY = size === 'large' ? 40 : 30;
-
   return (
-    <motion.div 
-      className="group flex flex-col items-center text-center"
-      initial={{ opacity: 0, y: initialY }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: animDuration, ease: "easeOut", delay }}
-    >
+    <div className={`group flex flex-col items-center text-center ${className}`}>
       <div className={`relative rounded-full overflow-hidden mb-4 border border-[#FF6B1A]/30 shadow-[0_0_15px_rgba(255,107,26,0.15)] transition-all duration-500 group-hover:scale-105 group-hover:border-[#FF6B1A] group-hover:shadow-[0_0_30px_rgba(255,107,26,0.6)] ${sizeClasses[size]}`}>
         <img src={person.photo} alt={person.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
       </div>
@@ -137,54 +118,178 @@ function PersonCard({ person, size = 'medium', delay = 0 }: { person: any, size?
           </a>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }
 
 export function TeamSection() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const boardRowRef = useRef<HTMLDivElement>(null);
+  const leadershipCardsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const domainSectionsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const dividersRef = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const ctx = gsap.context(() => {
+      // 1. Dividers expanding effect
+      dividersRef.current.forEach((divider) => {
+        if (!divider) return;
+        const line = divider.querySelector('.divider-line');
+        gsap.fromTo(line, 
+          { scaleX: 0 },
+          {
+            scaleX: 1,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: divider,
+              start: "top 85%",
+              end: "top 65%",
+              scrub: 1
+            }
+          }
+        );
+        gsap.fromTo(divider.querySelector('h2'),
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1, y: 0,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: divider,
+              start: "top 85%",
+              end: "top 75%",
+              scrub: 1
+            }
+          }
+        );
+      });
+
+      // 2. Parallax Leadership Cards
+      leadershipCardsRef.current.forEach((card, i) => {
+        if (!card) return;
+        gsap.fromTo(card,
+          { y: 100, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            ease: "back.out(1.5)",
+            scrollTrigger: {
+              trigger: card,
+              start: "top 90%",
+              end: "top 60%",
+              scrub: 1
+            }
+          }
+        );
+      });
+
+      // 3. Board Stagger Fade-in (No horizontal pin)
+      if (boardRowRef.current) {
+        const boardItems = Array.from(boardRowRef.current.children);
+        
+        gsap.fromTo(boardItems,
+          { opacity: 0, scale: 0.8, y: 50 },
+          {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            stagger: 0.1,
+            ease: "back.out(1.2)",
+            scrollTrigger: {
+              trigger: boardRowRef.current,
+              start: "top 85%",
+              end: "top 60%",
+              scrub: 1
+            }
+          }
+        );
+      }
+
+      // 4. Domains Stagger Wipe
+      domainSectionsRef.current.forEach((domain, i) => {
+        if (!domain) return;
+        gsap.fromTo(domain,
+          { y: 150, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: domain,
+              start: "top 95%",
+              end: "top 70%",
+              scrub: 1
+            }
+          }
+        );
+      });
+
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section id="team" className="relative w-full min-h-screen pb-32 overflow-hidden" style={{ background: 'transparent' }}>
+    <section id="team" ref={containerRef} className="relative w-full min-h-screen pb-32 overflow-hidden" style={{ background: 'transparent' }}>
       <div className="max-w-7xl mx-auto px-6">
         
         {/* Tier 1: Leadership */}
-        <Divider text="The Leadership" />
+        <div ref={el => { dividersRef.current[0] = el; }} className="relative flex items-center justify-center mt-24 mb-16">
+          <div className="divider-line absolute w-full h-[1px] bg-gradient-to-r from-transparent via-[#FF6B1A] to-transparent opacity-50 shadow-[0_0_10px_#FF6B1A] origin-center" />
+          <h2 className="relative px-6 bg-[#050505]/80 backdrop-blur-md font-mono text-2xl tracking-widest text-[#FF6B1A] uppercase" style={{ textShadow: '0 0 15px rgba(255,107,26,0.6)' }}>
+            The Leadership
+          </h2>
+        </div>
         <div className="flex flex-col md:flex-row justify-center items-center gap-16 md:gap-32">
-          <PersonCard person={teamData.facultyCoordinator} size="large" delay={0.1} />
-          <PersonCard person={teamData.hod} size="large" delay={0.3} />
+          <div ref={el => { leadershipCardsRef.current[0] = el; }}>
+            <PersonCard person={teamData.facultyCoordinator} size="large" />
+          </div>
+          <div ref={el => { leadershipCardsRef.current[1] = el; }}>
+            <PersonCard person={teamData.hod} size="large" />
+          </div>
         </div>
 
         {/* Tier 2: Board */}
-        <Divider text="The Board" />
-        <div className="flex flex-nowrap justify-start lg:justify-center overflow-x-auto pb-8 gap-x-8 md:gap-x-12 scrollbar-hide snap-x">
-          {teamData.boardMembers.map((member, i) => (
-            <div key={i} className="snap-center shrink-0">
-              <PersonCard person={member} size="medium" delay={i * 0.1} />
-            </div>
-          ))}
+        <div ref={el => { dividersRef.current[1] = el; }} className="relative flex items-center justify-center mt-32 mb-16">
+          <div className="divider-line absolute w-full h-[1px] bg-gradient-to-r from-transparent via-[#FF6B1A] to-transparent opacity-50 shadow-[0_0_10px_#FF6B1A] origin-center" />
+          <h2 className="relative px-6 bg-[#050505]/80 backdrop-blur-md font-mono text-2xl tracking-widest text-[#FF6B1A] uppercase" style={{ textShadow: '0 0 15px rgba(255,107,26,0.6)' }}>
+            The Board
+          </h2>
+        </div>
+        
+        <div className="w-full relative py-10">
+          <div ref={boardRowRef} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-y-12 gap-x-6">
+            {teamData.boardMembers.map((member, i) => (
+              <div key={i} className="flex justify-center">
+                <PersonCard person={member} size="medium" />
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Tier 3: Domains */}
-        <Divider text="The Domains" />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
+        <div ref={el => { dividersRef.current[2] = el; }} className="relative flex items-center justify-center mt-32 mb-24">
+          <div className="divider-line absolute w-full h-[1px] bg-gradient-to-r from-transparent via-[#FF6B1A] to-transparent opacity-50 shadow-[0_0_10px_#FF6B1A] origin-center" />
+          <h2 className="relative px-6 bg-[#050505]/80 backdrop-blur-md font-mono text-2xl tracking-widest text-[#FF6B1A] uppercase" style={{ textShadow: '0 0 15px rgba(255,107,26,0.6)' }}>
+            The Domains
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 lg:gap-8 pt-10">
           {teamData.domains.map((domain, i) => (
-            <div key={i} className="flex flex-col items-center">
-              <motion.h4 
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="font-mono text-lg text-white/50 uppercase tracking-widest mb-10 border-b border-[#FF6B1A]/20 pb-3 w-full text-center"
-              >
+            <div key={i} ref={el => { domainSectionsRef.current[i] = el; }} className="flex flex-col items-center">
+              <h4 className="font-mono text-lg text-white/50 uppercase tracking-widest mb-10 border-b border-[#FF6B1A]/20 pb-3 w-full text-center">
                 {domain.domainName}
-              </motion.h4>
+              </h4>
               
               <div className="mb-10">
-                <PersonCard person={domain.head} size="medium" delay={i * 0.1 + 0.2} />
+                <PersonCard person={domain.head} size="medium" />
               </div>
               
               <div className="flex justify-center gap-6 w-full">
                 {domain.leads.map((lead, j) => (
-                  <PersonCard key={j} person={lead} size="small" delay={i * 0.1 + 0.4 + (j * 0.1)} />
+                  <PersonCard key={j} person={lead} size="small" />
                 ))}
               </div>
             </div>

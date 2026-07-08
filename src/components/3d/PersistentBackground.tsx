@@ -68,10 +68,11 @@ interface ShapeProps {
   scale: number;
   speed: number;
   type: 'box' | 'octahedron' | 'tetrahedron';
+  drift: [number, number, number];
   index: number;
 }
 
-function BackgroundShape({ position, rotation, scale, speed, type, index }: ShapeProps) {
+function BackgroundShape({ position, rotation, scale, speed, type, drift, index }: ShapeProps) {
   const meshRef = useRef<THREE.Mesh>(null);
   const materialRef = useRef<THREE.MeshBasicMaterial>(null);
 
@@ -87,50 +88,74 @@ function BackgroundShape({ position, rotation, scale, speed, type, index }: Shap
     if (!meshRef.current || !materialRef.current) return;
     meshRef.current.scale.setScalar(0);
     materialRef.current.opacity = 0;
-    const delay = 0.4 + index * 0.12;
+    const delay = 0.1 + (index % 10) * 0.05;
     gsap.to(meshRef.current.scale, { x: scale, y: scale, z: scale, duration: 1.6, ease: 'back.out(1.4)', delay });
     gsap.to(materialRef.current,   { opacity: 0.2, duration: 1.2, ease: 'power2.out', delay });
   }, [index, scale]);
 
   useFrame((state) => {
     if (!meshRef.current) return;
+    
+    // Spin
     meshRef.current.rotation.x += speed * 0.007;
     meshRef.current.rotation.y += speed * 0.011;
-    meshRef.current.position.y =
-      position[1] + Math.sin(state.clock.elapsedTime * speed * 0.35 + position[0]) * 0.25;
+    
+    // Float and drift
+    meshRef.current.position.x += drift[0];
+    meshRef.current.position.y += drift[1] + Math.sin(state.clock.elapsedTime * speed * 0.5) * 0.005;
+    meshRef.current.position.z += drift[2];
+    
+    // Wrap around camera to create infinite space
+    const camY = state.camera.position.y;
+    if (meshRef.current.position.y > camY + 15) meshRef.current.position.y -= 50;
+    if (meshRef.current.position.y < camY - 35) meshRef.current.position.y += 50;
+    
+    if (meshRef.current.position.x > 20) meshRef.current.position.x = -20;
+    if (meshRef.current.position.x < -20) meshRef.current.position.x = 20;
   });
 
   return (
     <mesh ref={meshRef} position={position} rotation={rotation} scale={0} geometry={geometry}>
-      <meshBasicMaterial ref={materialRef} color="#8B4513" wireframe transparent opacity={0} />
+      <meshBasicMaterial ref={materialRef} color="#FF6B1A" wireframe transparent opacity={0} />
     </mesh>
   );
 }
 
-const SHAPES: Omit<ShapeProps, 'index'>[] = [
-  { position: [-7,   3,   -4], rotation: [0.3, 0.5, 0.0], scale: 1.1, speed: 0.6, type: 'box' },
-  { position: [ 7.5,-2,   -5], rotation: [0.1, 0.2, 0.4], scale: 0.9, speed: 0.8, type: 'octahedron' },
-  { position: [-6,  -4,   -3], rotation: [0.5, 0.1, 0.2], scale: 0.7, speed: 1.1, type: 'tetrahedron' },
-  { position: [ 6,   4,   -6], rotation: [0.2, 0.6, 0.1], scale: 1.4, speed: 0.5, type: 'box' },
-  { position: [-8,   1,   -7], rotation: [0.4, 0.3, 0.5], scale: 0.6, speed: 0.9, type: 'octahedron' },
-  { position: [ 8,  -4,   -4], rotation: [0.6, 0.1, 0.3], scale: 1.0, speed: 0.7, type: 'tetrahedron' },
-  { position: [ 3,   5.5, -8], rotation: [0.1, 0.4, 0.6], scale: 0.8, speed: 1.2, type: 'box' },
-  { position: [-4,  -5,   -5], rotation: [0.3, 0.7, 0.2], scale: 0.75,speed: 0.65,type: 'octahedron' },
-  { position: [ 5,  -5.5, -6], rotation: [0.5, 0.2, 0.4], scale: 1.2, speed: 0.55,type: 'box' },
-  { position: [-5,   5,   -9], rotation: [0.2, 0.5, 0.1], scale: 0.95,speed: 1.0, type: 'tetrahedron' },
-];
-
+// Generate 40 dynamic shapes scattered across a massive vertical space
+const SHAPES = Array.from({ length: 40 }).map((_, i) => ({
+  position: [
+    (Math.random() - 0.5) * 30, // X
+    10 - Math.random() * 50,    // Y (from 10 down to -40)
+    (Math.random() - 0.5) * 20 - 5 // Z
+  ] as [number, number, number],
+  rotation: [Math.random() * Math.PI, Math.random() * Math.PI, 0] as [number, number, number],
+  scale: Math.random() * 1.0 + 0.6,
+  speed: Math.random() * 1.5 + 0.5,
+  type: ['box', 'octahedron', 'tetrahedron'][Math.floor(Math.random() * 3)] as 'box' | 'octahedron' | 'tetrahedron',
+  drift: [
+    (Math.random() - 0.5) * 0.015,
+    (Math.random() - 0.5) * 0.015,
+    (Math.random() - 0.5) * 0.015,
+  ] as [number, number, number]
+}));
 
 // ─── Scroll Parallax Rig ──────────────────────────────────────────────────────
 function ParallaxRig({ scrollProgress }: { scrollProgress: React.MutableRefObject<number> }) {
   const { camera } = useThree();
 
   useFrame(() => {
-    // Slowly drift the camera up as the user scrolls down
     const t = scrollProgress.current;
-    camera.position.y += (-t * 2.5 - camera.position.y) * 0.05;
-    camera.position.z  = 7 + t * 1.5; // Subtly zoom out
-    camera.lookAt(0, 0, 0);
+    
+    // Deep dive down the Y axis as user scrolls
+    const targetY = -t * 35; 
+    camera.position.y += (targetY - camera.position.y) * 0.05;
+    
+    // Subtle cinematic zoom out and horizontal drift
+    camera.position.z = 7 + t * 5; 
+    camera.position.x = Math.sin(t * Math.PI) * 3;
+    
+    // Keep looking forward
+    camera.lookAt(camera.position.x * 0.5, camera.position.y, 0);
   });
 
   return null;

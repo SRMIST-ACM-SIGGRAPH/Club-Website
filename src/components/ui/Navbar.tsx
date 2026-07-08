@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useLenis } from 'lenis/react';
 
 const navItems = [
@@ -63,6 +63,7 @@ const navItems = [
 
 export function Navbar() {
   const [activeSection, setActiveSection] = useState('hero');
+  const [hoveredNav, setHoveredNav] = useState<string | null>(null);
   const lenis = useLenis();
 
   useEffect(() => {
@@ -89,86 +90,100 @@ export function Navbar() {
   const scrollTo = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
+      // The 'about' section is pinned by GSAP for 100vh and starts invisible.
+      // We offset by 80% of the window height so it's fully visible when jumped to.
+      const offset = id === 'about' ? window.innerHeight * 0.8 : 0;
+      
       if (lenis) {
-        lenis.scrollTo(element, { offset: 0, duration: 1.5 });
+        lenis.scrollTo(element, { offset: offset, duration: 1.5 });
       } else {
-        element.scrollIntoView({ behavior: 'smooth' });
+        if (id === 'about') {
+          window.scrollTo({ top: element.offsetTop + offset, behavior: 'smooth' });
+        } else {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
       }
     }
   };
 
   return (
     <nav className="fixed right-6 top-1/2 -translate-y-1/2 z-50 pointer-events-none">
-      <ul className="flex flex-col items-end gap-6 pointer-events-auto">
-        {navItems.map((item, index) => {
-          const activeIndex = navItems.findIndex(n => n.id === activeSection);
-          const distance = Math.abs(index - activeIndex);
-          const isActive = distance === 0;
-          
-          // Enhanced wave effect calculations
-          let xOffset = 0;
-          let scale = 1;
-          let lineWidth = 24;
-          
-          if (distance === 0) {
-            xOffset = -32;
-            scale = 1.3;
-            lineWidth = 48;
-          } else if (distance === 1) {
-            xOffset = -16;
-            scale = 1.15;
-            lineWidth = 32;
-          } else if (distance === 2) {
-            xOffset = -8;
-            scale = 1.05;
-            lineWidth = 28;
-          }
+      <div className="pointer-events-auto">
+        <ul className="flex flex-col items-center gap-4">
+          {navItems.map((item) => {
+            const isActive = activeSection === item.id;
+            const isHovered = hoveredNav === item.id;
+            const isCurrentTarget = (hoveredNav || activeSection) === item.id;
 
-          return (
-            <li key={item.id} className="relative group flex items-center justify-end">
-              <a
-                href={`#${item.id}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  scrollTo(item.id);
-                }}
-                className="flex items-center gap-4 relative py-3 pl-8 outline-none cursor-pointer"
-                title={item.label}
+            return (
+              <li 
+                key={item.id} 
+                className="relative group flex items-center justify-center w-12 h-12"
+                onMouseEnter={() => setHoveredNav(item.id)}
+                onMouseLeave={() => setHoveredNav(null)}
               >
-                {/* Active Indicator Wave - Orange Theme */}
-                <motion.div
-                  className="absolute right-0 top-1/2 -translate-y-1/2 h-px"
-                  style={{ backgroundColor: isActive ? '#ff8c00' : 'rgba(255, 140, 0, 0.3)' }}
-                  initial={false}
-                  animate={{
-                    width: lineWidth,
-                    right: '100%',
-                    marginRight: '1rem',
+                <a
+                  href={`#${item.id}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollTo(item.id);
                   }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                />
-
-                <motion.span
-                  className="flex items-center justify-center"
-                  initial={false}
-                  animate={{
-                    x: xOffset,
-                    color: isActive ? '#ff8c00' : 'rgba(255, 255, 255, 0.4)',
-                    scale: scale,
-                  }}
-                  whileHover={{
-                    color: '#ff8c00',
-                    scale: scale * 1.1,
-                  }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                  className="relative z-10 flex items-center justify-center w-full h-full outline-none cursor-pointer"
                 >
-                  {item.icon}
-                </motion.span>
-              </a>
-            </li>
-          );
-        })}
-      </ul>
+                  {/* Fluid Curved Blob Background */}
+                  {isCurrentTarget && (
+                    <motion.div
+                      layoutId="activeNavIndicator"
+                      className="absolute inset-0 bg-gradient-to-br from-[#ff8c00]/40 to-[#ff8c00]/10 border border-[#ff8c00]/50 shadow-[0_0_20px_rgba(255,140,0,0.4)] mix-blend-screen"
+                      animate={{
+                        borderRadius: [
+                          "40% 60% 70% 30% / 40% 50% 60% 50%",
+                          "60% 40% 30% 70% / 60% 30% 70% 40%",
+                          "50% 50% 20% 80% / 25% 80% 20% 75%",
+                          "40% 60% 70% 30% / 40% 50% 60% 50%"
+                        ]
+                      }}
+                      transition={{ 
+                        borderRadius: { repeat: Infinity, duration: 4, ease: "linear" },
+                        layout: { type: 'spring', stiffness: 400, damping: 30 } 
+                      }}
+                    />
+                  )}
+
+                  <motion.span
+                    className="relative z-10 flex items-center justify-center"
+                    animate={{
+                      color: isActive ? '#ffffff' : (isHovered ? '#ff8c00' : 'rgba(255, 255, 255, 0.4)'),
+                      scale: isActive ? 1.1 : (isHovered ? 1.1 : 1),
+                      filter: isActive ? 'drop-shadow(0px 0px 8px rgba(255,255,255,0.5))' : 'none',
+                    }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                  >
+                    {item.icon}
+                  </motion.span>
+                </a>
+
+                {/* Enhanced Bouncing Tooltip with Pointer */}
+                <AnimatePresence>
+                  {isHovered && (
+                    <motion.div
+                      initial={{ opacity: 0, x: 20, scale: 0.8 }}
+                      animate={{ opacity: 1, x: 0, scale: 1 }}
+                      exit={{ opacity: 0, x: 10, scale: 0.8 }}
+                      transition={{ type: 'spring', stiffness: 500, damping: 20 }}
+                      className="absolute right-[115%] top-1/2 -translate-y-1/2 px-4 py-2 bg-[#0a0a0a] border border-[#ff8c00]/40 rounded-lg text-[#ff8c00] font-mono text-xs uppercase tracking-widest shadow-[0_0_20px_rgba(255,140,0,0.2)] pointer-events-none whitespace-nowrap flex items-center z-50"
+                    >
+                      {item.label}
+                      {/* Triangle Pointer */}
+                      <div className="absolute -right-[5px] top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-[#0a0a0a] border-r border-t border-[#ff8c00]/40 rotate-45" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
     </nav>
   );
 }
