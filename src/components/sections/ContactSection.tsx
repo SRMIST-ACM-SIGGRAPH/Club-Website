@@ -74,8 +74,8 @@ export function ContactSection() {
     },
     {
       id: 'github',
-      label: 'srmacmsiggraph',
-      href: 'https://github.com/srmacmsiggraph',
+      label: '@SRMIST-ACM-SIGGRAPH',
+      href: 'https://github.com/SRMIST-ACM-SIGGRAPH',
       color: '#ff8c00', // Glitch in orange
       renderIcon: (isHovered: boolean) => (
         <motion.div
