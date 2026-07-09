@@ -100,7 +100,16 @@ export function ApplicationForm() {
     });
   };
 
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    window.location.reload();
+  };
+
   const updateField = (field: keyof FormData, value: string) => {
+    if (field === 'phone_number' && value !== '') {
+      if (!/^[0-9+\-()\s]*$/.test(value)) return;
+    }
+    
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
@@ -238,7 +247,12 @@ export function ApplicationForm() {
 
     return (
       <div className="max-w-2xl mx-auto mt-16 p-6 md:p-8 bg-[#050505]/80 backdrop-blur-md border border-white/10 rounded-2xl">
-        <h2 className="text-2xl font-bold text-white mb-6">Your Applications</h2>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-white">Your Applications</h2>
+          <button onClick={handleSignOut} className="text-sm text-white/50 hover:text-white transition-colors">
+            Not you? Sign out
+          </button>
+        </div>
         <div className="space-y-4 mb-8">
           {existingApps.map((app) => (
             <div key={app.id} className="p-4 border border-white/10 bg-white/5 rounded-xl flex justify-between items-center">
@@ -283,11 +297,16 @@ export function ApplicationForm() {
           <div className="flex justify-between items-center mb-8 pb-4 border-b border-white/10">
             <div>
               <h2 className="text-xl font-bold text-white">{formData.id ? 'Edit Application' : 'New Application'}</h2>
-              {existingApps.length > 0 && (
-                <button type="button" onClick={() => setIsViewingDashboard(true)} className="text-[#FF6B1A] text-sm hover:underline mt-1">
-                  &larr; Back to Dashboard
+              <div className="flex gap-4 mt-1 items-center">
+                {existingApps.length > 0 && (
+                  <button type="button" onClick={() => setIsViewingDashboard(true)} className="text-[#FF6B1A] text-sm hover:underline">
+                    &larr; Back to Dashboard
+                  </button>
+                )}
+                <button type="button" onClick={handleSignOut} className="text-white/50 hover:text-white text-sm transition-colors">
+                  Sign out
                 </button>
-              )}
+              </div>
             </div>
             <div className="flex gap-2">
               {[1, 2, 3].map(i => (
