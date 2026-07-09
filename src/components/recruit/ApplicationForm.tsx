@@ -49,6 +49,8 @@ export function ApplicationForm() {
       setUser(session?.user ?? null);
       if (session?.user) fetchApplications(session.user.id);
       else setIsLoadingAuth(false);
+    }).catch(() => {
+      setIsLoadingAuth(false);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -61,17 +63,20 @@ export function ApplicationForm() {
 
   const fetchApplications = async (userId: string) => {
     setIsLoadingAuth(true);
-    const { data } = await supabase
-      .from('applications')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false });
-    
-    if (data && data.length > 0) {
-      setExistingApps(data);
-      setIsViewingDashboard(true);
+    try {
+      const { data } = await supabase
+        .from('applications')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+      
+      if (data && data.length > 0) {
+        setExistingApps(data);
+        setIsViewingDashboard(true);
+      }
+    } finally {
+      setIsLoadingAuth(false);
     }
-    setIsLoadingAuth(false);
   };
 
   // 2. Local Storage Sync (only if NOT editing)

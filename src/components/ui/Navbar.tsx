@@ -123,10 +123,12 @@ export function Navbar() {
                 onMouseLeave={() => setHoveredNav(null)}
               >
                 <a
-                  href={`#${item.id}`}
+                  href={`/#${item.id}`}
                   onClick={(e) => {
-                    e.preventDefault();
-                    scrollTo(item.id);
+                    if (window.location.pathname === '/') {
+                      e.preventDefault();
+                      scrollTo(item.id);
+                    }
                   }}
                   className="relative z-10 flex items-center justify-center w-full h-full outline-none cursor-pointer"
                 >
