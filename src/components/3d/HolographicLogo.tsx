@@ -56,9 +56,9 @@ export function HolographicLogo({ mouseX, mouseY }: HolographicLogoProps) {
 
     // Mouse parallax
     const targetY = Math.sin(t * 0.25) * 0.06 + (mouseX.current * 0.8);
-    const targetX = -mouseY.current * 0.8;
-    groupRef.current.rotation.y += (targetY - groupRef.current.rotation.y) * 0.1;
-    groupRef.current.rotation.x += (targetX - groupRef.current.rotation.x) * 0.1;
+    const targetX = -mouseY.current * 0.5;
+    groupRef.current.rotation.y += (targetY - groupRef.current.rotation.y) * 0.08;
+    groupRef.current.rotation.x += (targetX - groupRef.current.rotation.x) * 0.08;
 
     // Independent cool rotation for ACM (Disabled as requested)
 
