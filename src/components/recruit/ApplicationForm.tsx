@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 import { User } from '@supabase/supabase-js';
 import confetti from 'canvas-confetti';
+import domainQuestions from './domain_questions.json';
+import recruitConfig from './recruit.json';
 
 type FormData = {
   id?: string; // Present if editing
@@ -16,6 +18,7 @@ type FormData = {
   linkedin_url: string;
   domain_preference: string;
   why_join: string;
+  domain_answers: Record<string, string>;
 };
 
 const emptyForm: FormData = {
@@ -27,6 +30,7 @@ const emptyForm: FormData = {
   linkedin_url: '',
   domain_preference: '',
   why_join: '',
+  domain_answers: {},
 };
 
 export function ApplicationForm() {
@@ -43,6 +47,24 @@ export function ApplicationForm() {
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  
+  // Deadline & Open state
+  const [isFormClosed, setIsFormClosed] = useState(false);
+
+  useEffect(() => {
+    const checkStatus = () => {
+      const now = new Date();
+      if (recruitConfig.global_sync) {
+        if (!recruitConfig.global_settings.is_open || new Date(recruitConfig.global_settings.deadline) <= now) {
+          setIsFormClosed(true);
+        }
+      } else {
+        const anyOpen = Object.values(recruitConfig.domains).some(d => d.is_open && new Date(d.deadline) > now);
+        if (!anyOpen) setIsFormClosed(true);
+      }
+    };
+    checkStatus();
+  }, []);
 
   // 1. Auth check
   useEffect(() => {
@@ -122,6 +144,13 @@ export function ApplicationForm() {
     }
   };
 
+  const updateDomainAnswer = (questionId: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      domain_answers: { ...prev.domain_answers, [questionId]: value }
+    }));
+  };
+
   const validateStep = (currentStep: number) => {
     const newErrors: Partial<Record<keyof FormData, string>> = {};
     let isValid = true;
@@ -146,6 +175,17 @@ export function ApplicationForm() {
       if (charCount < 50 || charCount > 100) {
         newErrors.why_join = `Must be between 50 and 100 characters (Currently: ${charCount})`;
         isValid = false;
+      }
+      
+      if (formData.domain_preference) {
+        const questions = (domainQuestions as any)[formData.domain_preference] || [];
+        questions.forEach((q: any) => {
+          if (q.required && !formData.domain_answers[q.id]?.trim()) {
+            // we store dynamic errors by prefixing them to avoid key conflicts
+            (newErrors as any)[`domain_${q.id}`] = "Required";
+            isValid = false;
+          }
+        });
       }
     }
 
@@ -186,7 +226,8 @@ export function ApplicationForm() {
       github_url: formData.github_url,
       linkedin_url: formData.linkedin_url,
       domain_preference: formData.domain_preference,
-      why_join: formData.why_join
+      why_join: formData.why_join,
+      domain_answers: formData.domain_answers
     };
 
     let error;
@@ -259,6 +300,17 @@ export function ApplicationForm() {
 
   if (isLoadingAuth) {
     return <div className="text-center text-white/50 py-12">Loading...</div>;
+  }
+
+  if (isFormClosed) {
+    return (
+      <div className="max-w-2xl mx-auto mt-16 p-10 bg-[#050505]/90 backdrop-blur-xl border-2 border-red-500/50 rounded-3xl text-center shadow-[0_0_50px_rgba(255,0,0,0.15)] relative overflow-hidden">
+        <h2 className="text-4xl font-black text-white mb-4 tracking-tight">Recruitments Closed</h2>
+        <p className="text-lg text-white/70 mb-8 max-w-md mx-auto leading-relaxed">
+          The deadline for this recruitment cycle has passed. Stay tuned to our socials for future openings!
+        </p>
+      </div>
+    );
   }
 
   if (isSuccess) {
@@ -419,15 +471,62 @@ export function ApplicationForm() {
                     <select autoFocus value={formData.domain_preference} onChange={e => updateField('domain_preference', e.target.value)} className="w-full bg-[#111] border border-white/10 rounded p-3 text-white focus:outline-none focus:border-[#FF6B1A] appearance-none">
                       <option value="" disabled>Select a domain...</option>
                       {/* Hide domains they already applied for unless they are editing this specific application */}
-                      {['Web Development', 'Corporate', 'Creatives', 'R&D'].map(domain => {
+                      {Object.keys(recruitConfig.domains).map(domain => {
                         const hasApplied = existingApps.some(app => app.domain_preference === domain);
                         const isCurrentEdit = formData.domain_preference === domain;
                         if (hasApplied && !isCurrentEdit) return null;
+
+                        // Check deadlines
+                        const now = new Date();
+                        const config = (recruitConfig.domains as any)[domain];
+                        const isOpenGlobally = recruitConfig.global_settings.is_open && new Date(recruitConfig.global_settings.deadline) > now;
+                        const isOpenLocally = config?.is_open && new Date(config?.deadline) > now;
+                        
+                        const isDomainOpen = recruitConfig.global_sync ? isOpenGlobally : isOpenLocally;
+                        
+                        if (!isDomainOpen && !isCurrentEdit) {
+                          return <option key={domain} value={domain} disabled>{domain} (Closed)</option>;
+                        }
+
                         return <option key={domain} value={domain}>{domain}</option>
                       })}
                     </select>
                     {errors.domain_preference && <p className="text-red-400 text-xs mt-1">{errors.domain_preference}</p>}
                   </div>
+
+                  {/* Render Dynamic Questions based on Domain Selection */}
+                  {formData.domain_preference && (
+                    <div className="space-y-4 pt-4 border-t border-white/10">
+                      <h4 className="text-white font-medium mb-2">Domain Specific Questions</h4>
+                      {((domainQuestions as any)[formData.domain_preference] || []).map((q: any) => (
+                        <div key={q.id}>
+                          <label className="block text-white/70 text-sm mb-1">
+                            {q.label} {q.required && '*'}
+                          </label>
+                          {q.type === 'textarea' ? (
+                            <textarea
+                              rows={3}
+                              placeholder={q.placeholder}
+                              value={formData.domain_answers[q.id] || ''}
+                              onChange={e => updateDomainAnswer(q.id, e.target.value)}
+                              className="w-full bg-white/5 border border-white/10 rounded p-3 text-white focus:outline-none focus:border-[#FF6B1A] resize-none"
+                            />
+                          ) : (
+                            <input
+                              type={q.type}
+                              placeholder={q.placeholder}
+                              value={formData.domain_answers[q.id] || ''}
+                              onChange={e => updateDomainAnswer(q.id, e.target.value)}
+                              className="w-full bg-white/5 border border-white/10 rounded p-3 text-white focus:outline-none focus:border-[#FF6B1A]"
+                            />
+                          )}
+                          {/* Display specific error if missing */}
+                          {(errors as any)[`domain_${q.id}`] && <p className="text-red-400 text-xs mt-1">{(errors as any)[`domain_${q.id}`]}</p>}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
                   <div>
                     <div className="flex justify-between items-end mb-1">
                       <label className="block text-white/70 text-sm">Why do you want to join? *</label>
