@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 import { User } from '@supabase/supabase-js';
+import confetti from 'canvas-confetti';
 
 type FormData = {
   id?: string; // Present if editing
@@ -227,21 +228,63 @@ export function ApplicationForm() {
     setIsViewingDashboard(false);
   };
 
+  useEffect(() => {
+    if (isSuccess) {
+      const duration = 3000;
+      const end = Date.now() + duration;
+
+      const frame = () => {
+        confetti({
+          particleCount: 5,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 },
+          colors: ['#FF6B1A', '#00ffcc', '#ffffff']
+        });
+        confetti({
+          particleCount: 5,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 },
+          colors: ['#FF6B1A', '#00ffcc', '#ffffff']
+        });
+
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
+        }
+      };
+      frame();
+    }
+  }, [isSuccess]);
+
   if (isLoadingAuth) {
     return <div className="text-center text-white/50 py-12">Loading...</div>;
   }
 
   if (isSuccess) {
     return (
-      <div className="max-w-2xl mx-auto mt-16 p-8 bg-[#050505]/80 backdrop-blur-md border border-[#FF6B1A]/30 rounded-2xl text-center shadow-[0_0_30px_rgba(255,107,26,0.15)]">
-        <h2 className="text-3xl font-bold text-white mb-4">Application Saved!</h2>
-        <p className="text-white/70 mb-8">
-          Thank you for applying to ACM SIGGRAPH SRM. You can track or edit your applications by returning to this page.
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="max-w-2xl mx-auto mt-16 p-10 bg-[#050505]/90 backdrop-blur-xl border-2 border-[#FF6B1A]/50 rounded-3xl text-center shadow-[0_0_50px_rgba(255,107,26,0.2)] relative overflow-hidden"
+      >
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#FF6B1A] to-transparent" />
+        <div className="w-20 h-20 bg-[#FF6B1A]/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-[#FF6B1A]/30">
+          <svg className="w-10 h-10 text-[#FF6B1A]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h2 className="text-4xl font-black text-white mb-4 tracking-tight">Application Saved!</h2>
+        <p className="text-lg text-white/70 mb-8 max-w-md mx-auto leading-relaxed">
+          Thank you for applying to ACM SIGGRAPH SRM. Your application has been secured in our system. We will reach out soon!
         </p>
-        <button onClick={() => { setIsSuccess(false); fetchApplications(user!.id); }} className="px-6 py-3 bg-[#FF6B1A] text-black font-bold rounded hover:bg-[#ffaa00] transition-colors">
+        <button 
+          onClick={() => { setIsSuccess(false); fetchApplications(user!.id); }} 
+          className="px-8 py-4 bg-[#FF6B1A] text-black font-bold rounded-xl hover:bg-[#ffaa00] transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,107,26,0.3)]"
+        >
           View Dashboard
         </button>
-      </div>
+      </motion.div>
     );
   }
 
