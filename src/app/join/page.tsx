@@ -13,7 +13,9 @@ export default function JoinPage() {
       <div className="max-w-5xl mx-auto px-6">
         <RecruitHero />
         <DomainShowcase />
-        <ApplicationForm />
+        <div id="application-form" className="scroll-mt-24">
+          <ApplicationForm />
+        </div>
       </div>
     </div>
   );

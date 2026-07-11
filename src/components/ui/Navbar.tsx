@@ -3,15 +3,18 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLenis } from 'lenis/react';
+import { usePathname, useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { supabase } from '@/lib/supabase';
 
 const navItems = [
   { 
     id: 'hero', 
     label: 'Home', 
     icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" />
-      </svg>
+      <div className="w-6 h-6 flex items-center justify-center rounded-full bg-black shadow-lg overflow-hidden border border-white/20">
+        <img src="/icon.svg" alt="Home" className="w-full h-full object-cover scale-110" />
+      </div>
     ) 
   },
   { 
@@ -61,15 +64,55 @@ const navItems = [
   },
 ];
 
+const joinNavItems = [
+  { 
+    id: 'home-redirect', 
+    label: 'Home', 
+    icon: (
+      <div className="w-6 h-6 flex items-center justify-center rounded-full bg-black shadow-lg overflow-hidden border border-white/20">
+        <img src="/icon.svg" alt="Home" className="w-full h-full object-cover scale-110" />
+      </div>
+    ),
+    href: '/'
+  },
+  { 
+    id: 'application-form', 
+    label: 'Form', 
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+      </svg>
+    )
+  }
+];
+
 export function Navbar() {
   const [activeSection, setActiveSection] = useState('hero');
   const [hoveredNav, setHoveredNav] = useState<string | null>(null);
   const lenis = useLenis();
+  const pathname = usePathname();
 
+  const activeItems = pathname === '/join' ? joinNavItems : navItems;
+
+  // Global Auth Listener: Catches OAuth tokens if Supabase falls back to root URL
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session && window.location.hash.includes('access_token')) {
+        // We caught a token! If we are on root, redirect them back to the form
+        if (window.location.pathname === '/') {
+          window.location.href = '/join';
+        }
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Effect runs on all pages, but logic is safe
   useEffect(() => {
     const handleScroll = () => {
-      let currentActive = 'hero';
-      for (const item of navItems) {
+      let currentActive = activeItems[0].id;
+      for (const item of activeItems) {
+        if ('href' in item && item.href) continue;
         const element = document.getElementById(item.id);
         if (element) {
           const rect = element.getBoundingClientRect();
@@ -85,7 +128,7 @@ export function Navbar() {
     handleScroll();
 
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [activeItems]);
 
   const scrollTo = (id: string) => {
     const element = document.getElementById(id);
@@ -110,7 +153,7 @@ export function Navbar() {
     <nav className="fixed right-6 top-1/2 -translate-y-1/2 z-50 pointer-events-none">
       <div className="pointer-events-auto">
         <ul className="flex flex-col items-center gap-4">
-          {navItems.map((item) => {
+          {activeItems.map((item) => {
             const isActive = activeSection === item.id;
             const isHovered = hoveredNav === item.id;
             const isCurrentTarget = (hoveredNav || activeSection) === item.id;
@@ -122,16 +165,52 @@ export function Navbar() {
                 onMouseEnter={() => setHoveredNav(item.id)}
                 onMouseLeave={() => setHoveredNav(null)}
               >
-                <a
-                  href={`/#${item.id}`}
-                  onClick={(e) => {
-                    if (window.location.pathname === '/') {
+                {('href' in item && item.href) ? (
+                  <Link
+                    href={item.href}
+                    className="relative z-10 flex items-center justify-center w-full h-full outline-none cursor-pointer"
+                  >
+                    {/* Fluid Curved Blob Background */}
+                    {isCurrentTarget && (
+                      <motion.div
+                        layoutId="activeNavIndicator"
+                        className="absolute inset-0 bg-gradient-to-br from-[#ff8c00]/40 to-[#ff8c00]/10 border border-[#ff8c00]/50 shadow-[0_0_20px_rgba(255,140,0,0.4)] mix-blend-screen"
+                        animate={{
+                          borderRadius: [
+                            "40% 60% 70% 30% / 40% 50% 60% 50%",
+                            "60% 40% 30% 70% / 60% 30% 70% 40%",
+                            "50% 50% 20% 80% / 25% 80% 20% 75%",
+                            "40% 60% 70% 30% / 40% 50% 60% 50%"
+                          ]
+                        }}
+                        transition={{ 
+                          borderRadius: { repeat: Infinity, duration: 4, ease: "linear" },
+                          layout: { type: 'spring', stiffness: 400, damping: 30 } 
+                        }}
+                      />
+                    )}
+
+                    <motion.span
+                      className="relative z-10 flex items-center justify-center"
+                      animate={{
+                        color: isActive ? '#ffffff' : (isHovered ? '#ff8c00' : 'rgba(255, 255, 255, 0.4)'),
+                        scale: isActive ? 1.1 : (isHovered ? 1.1 : 1),
+                        filter: isActive ? 'drop-shadow(0px 0px 8px rgba(255,255,255,0.5))' : 'none',
+                      }}
+                      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                    >
+                      {item.icon}
+                    </motion.span>
+                  </Link>
+                ) : (
+                  <a
+                    href={`#${item.id}`}
+                    onClick={(e) => {
                       e.preventDefault();
                       scrollTo(item.id);
-                    }
-                  }}
-                  className="relative z-10 flex items-center justify-center w-full h-full outline-none cursor-pointer"
-                >
+                    }}
+                    className="relative z-10 flex items-center justify-center w-full h-full outline-none cursor-pointer"
+                  >
                   {/* Fluid Curved Blob Background */}
                   {isCurrentTarget && (
                     <motion.div
@@ -164,6 +243,7 @@ export function Navbar() {
                     {item.icon}
                   </motion.span>
                 </a>
+                )}
 
                 {/* Enhanced Bouncing Tooltip with Pointer */}
                 <AnimatePresence>
