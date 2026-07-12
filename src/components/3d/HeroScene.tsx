@@ -14,8 +14,8 @@ interface SceneMouseProps {
 function CameraRig({ mouseX, mouseY }: SceneMouseProps) {
   const { camera } = useThree();
   useFrame(() => {
-    camera.position.x += (mouseX.current * 0.8 - camera.position.x) * 0.04;
-    camera.position.y += (-mouseY.current * 0.5 - camera.position.y) * 0.04;
+    camera.position.x += (mouseX.current * 0.5 - camera.position.x) * 0.04;
+    camera.position.y += (-mouseY.current * 0.3 - camera.position.y) * 0.04;
     camera.lookAt(0, 0, 0);
   });
   return null;
