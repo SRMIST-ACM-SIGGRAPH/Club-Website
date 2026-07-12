@@ -163,7 +163,8 @@ function ParallaxRig({ scrollProgress }: { scrollProgress: React.MutableRefObjec
 
 // ─── Scene Content ────────────────────────────────────────────────────────────
 function SceneContent({ scrollProgress }: { scrollProgress: React.MutableRefObject<number> }) {
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const { size } = useThree();
+  const isMobile = size.width < 768;
 
   return (
     <>
@@ -182,6 +183,7 @@ function SceneContent({ scrollProgress }: { scrollProgress: React.MutableRefObje
         <EffectComposer>
           <Bloom
             intensity={0.8}
+            mipmapBlur
             luminanceThreshold={0.2}
             luminanceSmoothing={0.9}
             radius={0.6}
@@ -221,8 +223,8 @@ export function PersistentBackground() {
     >
       <Canvas
         camera={{ position: [0, 0, 7], fov: 55 }}
-        gl={{ antialias: false, alpha: false, powerPreference: "high-performance" }}
-        dpr={1}
+        gl={{ antialias: true, alpha: false }}
+        dpr={[1, 2]}
         style={{ width: '100%', height: '100%' }}
       >
         <SceneContent scrollProgress={scrollProgress} />

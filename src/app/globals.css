@@ -41,3 +41,21 @@ h1, h2, h3, h4, h5, h6 {
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+
+@keyframes blob-spin {
+  0%, 100% {
+    border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+  }
+  34% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+  67% {
+    border-radius: 50% 50% 20% 80% / 25% 80% 20% 75%;
+  }
+}
+
+.animate-blob-spin {
+  animation: blob-spin 6s linear infinite;
+  will-change: border-radius;
+}
+

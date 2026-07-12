@@ -25,13 +25,14 @@ export function EventsGrid() {
     fetchEvents();
   }, []);
 
-  // Prevent scrolling when modal is open
+  // Prevent scrolling when modal is open — use class toggle to avoid forced layout
   useEffect(() => {
     if (selectedEventId) {
-      document.body.style.overflow = 'hidden';
+      document.body.classList.add('overflow-hidden');
     } else {
-      document.body.style.overflow = 'auto';
+      document.body.classList.remove('overflow-hidden');
     }
+    return () => document.body.classList.remove('overflow-hidden');
   }, [selectedEventId]);
 
   const selectedEvent = events.find((e) => e.id === selectedEventId);
@@ -106,7 +107,7 @@ export function EventsGrid() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedEventId(null)}
-              className="absolute inset-0 bg-black/80 backdrop-blur-sm cursor-pointer"
+              className="absolute inset-0 bg-black/85 cursor-pointer"
             />
             
             <motion.div

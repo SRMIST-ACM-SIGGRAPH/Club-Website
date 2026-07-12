@@ -22,6 +22,9 @@ function CameraRig({ mouseX, mouseY }: SceneMouseProps) {
 }
 
 function SceneContent({ mouseX, mouseY }: SceneMouseProps) {
+  const { size } = useThree();
+  const isMobile = size.width < 768;
+
   return (
     <>
       {/* Transparent background — lets PersistentBackground show through */}
@@ -33,15 +36,17 @@ function SceneContent({ mouseX, mouseY }: SceneMouseProps) {
         <HolographicLogo mouseX={mouseX} mouseY={mouseY} />
       </Suspense>
 
-      <EffectComposer>
-        <Bloom
-          intensity={1.0}
-          mipmapBlur
-          luminanceThreshold={0.5}
-          luminanceSmoothing={0.9}
-          radius={0.4}
-        />
-      </EffectComposer>
+      {!isMobile && (
+        <EffectComposer>
+          <Bloom
+            intensity={1.0}
+            mipmapBlur
+            luminanceThreshold={0.5}
+            luminanceSmoothing={0.9}
+            radius={0.4}
+          />
+        </EffectComposer>
+      )}
     </>
   );
 }

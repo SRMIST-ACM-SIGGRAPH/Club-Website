@@ -237,7 +237,7 @@ export function TeamSection() {
         {/* Tier 1: Leadership */}
         <div ref={el => { dividersRef.current[0] = el; }} className="relative flex items-center justify-center mt-24 mb-16">
           <div className="divider-line absolute w-full h-[1px] bg-gradient-to-r from-transparent via-[#FF6B1A] to-transparent opacity-50 shadow-[0_0_10px_#FF6B1A] origin-center" />
-          <h2 className="relative px-6 bg-[#050505]/80 backdrop-blur-md font-mono text-2xl tracking-widest text-[#FF6B1A] uppercase" style={{ textShadow: '0 0 15px rgba(255,107,26,0.6)' }}>
+          <h2 className="relative px-6 bg-[#050505] font-mono text-2xl tracking-widest text-[#FF6B1A] uppercase" style={{ textShadow: '0 0 15px rgba(255,107,26,0.6)' }}>
             The Leadership
           </h2>
         </div>
@@ -253,7 +253,7 @@ export function TeamSection() {
         {/* Tier 2: Board */}
         <div ref={el => { dividersRef.current[1] = el; }} className="relative flex items-center justify-center mt-32 mb-16">
           <div className="divider-line absolute w-full h-[1px] bg-gradient-to-r from-transparent via-[#FF6B1A] to-transparent opacity-50 shadow-[0_0_10px_#FF6B1A] origin-center" />
-          <h2 className="relative px-6 bg-[#050505]/80 backdrop-blur-md font-mono text-2xl tracking-widest text-[#FF6B1A] uppercase" style={{ textShadow: '0 0 15px rgba(255,107,26,0.6)' }}>
+          <h2 className="relative px-6 bg-[#050505] font-mono text-2xl tracking-widest text-[#FF6B1A] uppercase" style={{ textShadow: '0 0 15px rgba(255,107,26,0.6)' }}>
             The Board
           </h2>
         </div>
@@ -271,7 +271,7 @@ export function TeamSection() {
         {/* Tier 3: Domains */}
         <div ref={el => { dividersRef.current[2] = el; }} className="relative flex items-center justify-center mt-32 mb-24">
           <div className="divider-line absolute w-full h-[1px] bg-gradient-to-r from-transparent via-[#FF6B1A] to-transparent opacity-50 shadow-[0_0_10px_#FF6B1A] origin-center" />
-          <h2 className="relative px-6 bg-[#050505]/80 backdrop-blur-md font-mono text-2xl tracking-widest text-[#FF6B1A] uppercase" style={{ textShadow: '0 0 15px rgba(255,107,26,0.6)' }}>
+          <h2 className="relative px-6 bg-[#050505] font-mono text-2xl tracking-widest text-[#FF6B1A] uppercase" style={{ textShadow: '0 0 15px rgba(255,107,26,0.6)' }}>
             The Domains
           </h2>
         </div>
