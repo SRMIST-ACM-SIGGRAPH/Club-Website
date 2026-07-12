@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useEffect } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { Text3D, Center } from '@react-three/drei';
 import * as THREE from 'three';
 import gsap from 'gsap';
@@ -19,30 +19,63 @@ export function HolographicLogo({ mouseX, mouseY }: HolographicLogoProps) {
   const sigCoreMatRef = useRef<THREE.MeshBasicMaterial>(null);
   const initialized = useRef(false);
 
-  // Build-in animation on mount
-  useEffect(() => {
-    if (initialized.current || !groupRef.current) return;
-    initialized.current = true;
+  const { viewport } = useThree();
+  const responsiveScale = Math.min(1.0, viewport.width / 7.2);
 
+  // Build-in animation on mount synchronized with loader completion
+  useEffect(() => {
+    if (!groupRef.current) return;
     const group = groupRef.current;
 
-    // Start invisible/small
-    group.scale.setScalar(0);
-    group.position.z = -3;
+    const startEntranceAnimation = () => {
+      if (initialized.current) return;
+      initialized.current = true;
 
-    // Animate in: scale up + move to 0
-    gsap.to(group.scale, {
-      x: 1, y: 1, z: 1,
-      duration: 1.8,
-      ease: 'expo.out',
-      delay: 1.8,
-    });
-    gsap.to(group.position, {
-      z: 0,
-      duration: 1.8,
-      ease: 'expo.out',
-      delay: 1.8,
-    });
+      // Animate in: scale up + move to 0
+      gsap.to(group.scale, {
+        x: 1,
+        y: 1,
+        z: 1,
+        duration: 1.8,
+        ease: 'expo.out',
+      });
+      gsap.to(group.position, {
+        z: 0,
+        duration: 1.8,
+        ease: 'expo.out',
+      });
+    };
+
+    // Cast window to any for TypeScript
+    const win = window as any;
+
+    if (win.__loaderComplete) {
+      // Loader has already completed (e.g. fast load or page navigation)
+      group.scale.setScalar(1);
+      group.position.z = 0;
+      initialized.current = true;
+    } else {
+      // Start hidden/small, await completion trigger
+      group.scale.setScalar(0);
+      group.position.z = -3;
+
+      const handleLoaderComplete = () => {
+        startEntranceAnimation();
+      };
+
+      // Safety fallback: if event isn't received in 5s, trigger anyway
+      const safetyFallback = setTimeout(() => {
+        if (!initialized.current) {
+          startEntranceAnimation();
+        }
+      }, 5000);
+
+      window.addEventListener('loaderComplete', handleLoaderComplete);
+      return () => {
+        window.removeEventListener('loaderComplete', handleLoaderComplete);
+        clearTimeout(safetyFallback);
+      };
+    }
   }, []);
 
   // Animations & Parallax
@@ -109,46 +142,48 @@ export function HolographicLogo({ mouseX, mouseY }: HolographicLogoProps) {
 
   return (
     <group ref={groupRef} position={[0, 0, 0]}>
-      {/* ACM */}
-      <Center position={[0, 0.7, 0]}>
-        <group>
-          {/* Inner faint glowing core */}
-          <Text3D {...fontProps} size={0.5}>
-            {'ACM'}
-            <meshBasicMaterial color={accentOrange} transparent opacity={0.25} />
-          </Text3D>
-          
-          {/* Main Orange Wireframe */}
-          <Text3D {...fontProps} size={0.5}>
-            {'ACM'}
-            <meshBasicMaterial color={accentOrange} wireframe transparent opacity={0.9} />
-          </Text3D>
-
-          {/* Cyan Glitch Offset Layer (Chromatic Aberration) */}
-          <group ref={acmGlitchRef}>
+      <group scale={[responsiveScale, responsiveScale, responsiveScale]}>
+        {/* ACM */}
+        <Center position={[0, 0.7, 0]}>
+          <group>
+            {/* Inner faint glowing core */}
             <Text3D {...fontProps} size={0.5}>
               {'ACM'}
-              <meshBasicMaterial color={accentCyan} wireframe transparent opacity={0.5} />
+              <meshBasicMaterial color={accentOrange} transparent opacity={0.25} />
+            </Text3D>
+            
+            {/* Main Orange Wireframe */}
+            <Text3D {...fontProps} size={0.5}>
+              {'ACM'}
+              <meshBasicMaterial color={accentOrange} wireframe transparent opacity={0.9} />
+            </Text3D>
+
+            {/* Cyan Glitch Offset Layer (Chromatic Aberration) */}
+            <group ref={acmGlitchRef}>
+              <Text3D {...fontProps} size={0.5}>
+                {'ACM'}
+                <meshBasicMaterial color={accentCyan} wireframe transparent opacity={0.5} />
+              </Text3D>
+            </group>
+          </group>
+        </Center>
+
+        {/* SIGGRAPH */}
+        <Center position={[0, -0.4, 0]}>
+          <group>
+            {/* Inner faint glowing core */}
+            <Text3D {...fontProps}>
+              {'SIGGRAPH'}
+              <meshBasicMaterial ref={sigCoreMatRef} color={sigColor} transparent opacity={0.4} />
+            </Text3D>
+            {/* Outer wireframe shell */}
+            <Text3D {...fontProps}>
+              {'SIGGRAPH'}
+              <meshBasicMaterial ref={sigWireMatRef} color={sigColor} wireframe transparent opacity={1.0} />
             </Text3D>
           </group>
-        </group>
-      </Center>
-
-      {/* SIGGRAPH */}
-      <Center position={[0, -0.4, 0]}>
-        <group>
-          {/* Inner faint glowing core */}
-          <Text3D {...fontProps}>
-            {'SIGGRAPH'}
-            <meshBasicMaterial ref={sigCoreMatRef} color={sigColor} transparent opacity={0.4} />
-          </Text3D>
-          {/* Outer wireframe shell */}
-          <Text3D {...fontProps}>
-            {'SIGGRAPH'}
-            <meshBasicMaterial ref={sigWireMatRef} color={sigColor} wireframe transparent opacity={1.0} />
-          </Text3D>
-        </group>
-      </Center>
+        </Center>
+      </group>
 
       {/* Point lights to add extra ambient bloom in the scene */}
       <pointLight color={accentOrange} intensity={1.5} distance={6} position={[0, 1.5, 2]} />

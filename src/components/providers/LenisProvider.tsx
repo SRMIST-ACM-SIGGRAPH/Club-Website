@@ -15,15 +15,14 @@ function ScrollTriggerSync() {
 
   useEffect(() => {
     // Tell GSAP ScrollTrigger to use Lenis's scroll position
-    gsap.ticker.add((time) => {
+    const tickerCallback = (time: number) => {
       lenis?.raf(time * 1000);
-    });
+    };
+    gsap.ticker.add(tickerCallback);
     gsap.ticker.lagSmoothing(0);
 
     return () => {
-      gsap.ticker.remove((time) => {
-        lenis?.raf(time * 1000);
-      });
+      gsap.ticker.remove(tickerCallback);
     };
   }, [lenis]);
 

@@ -4,6 +4,7 @@ import { LenisProvider } from "@/components/providers/LenisProvider";
 import { PersistentBackgroundWrapper } from "@/components/3d/PersistentBackgroundWrapper";
 import { Navbar } from "@/components/ui/Navbar";
 import { Footer } from "@/components/ui/Footer";
+import { LoadingOverlay } from "@/components/ui/LoadingOverlay";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -33,6 +34,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col font-sans bg-[#050505]">
         <LenisProvider>
+          <LoadingOverlay />
           {/* Fixed background — always mounted, never unmounts between sections */}
           <PersistentBackgroundWrapper />
 

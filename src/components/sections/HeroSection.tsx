@@ -31,14 +31,13 @@ export function HeroSection() {
         mouseY.current = 0;
       }}
     >
-      {/* Soft CSS Radial Glow behind the logo */}
+      {/* Soft CSS Radial Glow behind the logo — no filter:blur, already soft */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
         style={{
-          width: '80vw',
-          height: '80vw',
-          background: 'radial-gradient(circle, rgba(255,140,0,0.15) 0%, rgba(200,80,0,0.05) 30%, rgba(0,0,0,0) 70%)',
-          filter: 'blur(100px)',
+          width: '120vw',
+          height: '120vw',
+          background: 'radial-gradient(circle, rgba(255,140,0,0.10) 0%, rgba(200,80,0,0.03) 25%, rgba(0,0,0,0) 55%)',
           zIndex: -1,
         }}
       />

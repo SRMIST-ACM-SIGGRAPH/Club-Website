@@ -163,6 +163,9 @@ function ParallaxRig({ scrollProgress }: { scrollProgress: React.MutableRefObjec
 
 // ─── Scene Content ────────────────────────────────────────────────────────────
 function SceneContent({ scrollProgress }: { scrollProgress: React.MutableRefObject<number> }) {
+  const { size } = useThree();
+  const isMobile = size.width < 768;
+
   return (
     <>
       <color attach="background" args={['#050505']} />
@@ -176,15 +179,17 @@ function SceneContent({ scrollProgress }: { scrollProgress: React.MutableRefObje
         <BackgroundShape key={i} index={i} {...shape} />
       ))}
 
-      <EffectComposer>
-        <Bloom
-          intensity={0.8}
-          mipmapBlur
-          luminanceThreshold={0.2}
-          luminanceSmoothing={0.9}
-          radius={0.6}
-        />
-      </EffectComposer>
+      {!isMobile && (
+        <EffectComposer>
+          <Bloom
+            intensity={0.8}
+            mipmapBlur
+            luminanceThreshold={0.2}
+            luminanceSmoothing={0.9}
+            radius={0.6}
+          />
+        </EffectComposer>
+      )}
     </>
   );
 }

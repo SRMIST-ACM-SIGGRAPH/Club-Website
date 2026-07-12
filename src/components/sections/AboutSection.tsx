@@ -14,45 +14,64 @@ export function AboutSection() {
   useEffect(() => {
     if (!containerRef.current || !imageRef.current || !textGroupRef.current) return;
 
-    // Use gsap.context to ensure proper cleanup in React strict mode
-    const ctx = gsap.context(() => {
-      const texts = textGroupRef.current!.children;
+    const mm = gsap.matchMedia();
+    const texts = textGroupRef.current.children;
 
+    // Desktop: Pin and scrub animation
+    mm.add("(min-width: 768px)", () => {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
-          start: 'top top',    // Pin when the top of the section hits the top of the viewport
-          end: '+=100%',       // Pin for exactly 1 screen height of scrolling
+          start: 'top top',
+          end: '+=100%',
           pin: true,
-          scrub: 1,            // 1 second smoothing on the scrub
+          scrub: 1,
         }
       });
 
-      // Initial state
-      gsap.set(imageRef.current, { opacity: 0, scale: 0.8 });
+      gsap.set(imageRef.current, { opacity: 0, scale: 0.8, y: 0 });
       gsap.set(texts, { opacity: 0, y: 50 });
 
-      // 1. Image scales and fades in
       tl.to(imageRef.current, 
         { opacity: 1, scale: 1, duration: 1, ease: 'power2.out' }
       );
 
-      // 2. Text elements stagger in (overlapping with the image animation)
       tl.to(texts, 
         { opacity: 1, y: 0, duration: 1, stagger: 0.2, ease: 'power3.out' },
         "-=0.6"
       );
 
-      // 3. Image subtly drifts up to create parallax while the rest of the scrub finishes
       tl.to(imageRef.current, {
         y: -40,
         duration: 1,
         ease: 'none'
       }, "-=0.2");
-      
-    }, containerRef);
+    });
 
-    return () => ctx.revert();
+    // Mobile: Non-pinning, standard scroll reveals
+    mm.add("(max-width: 767px)", () => {
+      gsap.set(imageRef.current, { opacity: 0, scale: 0.95, y: 0 });
+      gsap.set(texts, { opacity: 0, y: 20 });
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top 80%',
+          toggleActions: 'play none none reverse',
+        }
+      });
+
+      tl.to(imageRef.current, 
+        { opacity: 1, scale: 1, duration: 0.8, ease: 'power2.out' }
+      );
+
+      tl.to(texts, 
+        { opacity: 1, y: 0, duration: 0.8, stagger: 0.15, ease: 'power3.out' },
+        "-=0.4"
+      );
+    });
+
+    return () => mm.revert();
   }, []);
 
   return (

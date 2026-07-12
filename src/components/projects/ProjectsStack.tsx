@@ -104,7 +104,7 @@ export function ProjectsStack() {
     return (
       <div className="flex flex-wrap justify-center gap-8 w-full">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="w-[300px] h-[400px] rounded-2xl bg-[#050505]/40 backdrop-blur-md border border-white/5 animate-pulse flex flex-col p-6 shadow-[0_0_15px_rgba(255,140,0,0.05)]">
+          <div key={i} className="w-full max-w-[300px] h-[400px] rounded-2xl bg-[#050505]/40 backdrop-blur-md border border-white/5 animate-pulse flex flex-col p-6 shadow-[0_0_15px_rgba(255,140,0,0.05)]">
             <div className="w-full h-40 bg-white/5 rounded-lg mb-4"></div>
             <div className="h-6 w-3/4 bg-white/5 rounded mb-2"></div>
             <div className="h-4 w-full bg-white/5 rounded mb-1"></div>
@@ -136,7 +136,7 @@ export function ProjectsStack() {
             key={project.id}
             ref={(el) => { cardsRef.current[index] = el; }}
             layoutId={`project-${project.id}`}
-            className="w-[300px] sm:w-[350px] flex flex-col bg-[#0a0a0a]/60 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden cursor-pointer group shadow-[0_0_20px_rgba(0,0,0,0.5)]"
+            className="w-full max-w-[300px] sm:max-w-[350px] flex flex-col bg-[#0a0a0a] border border-white/10 rounded-2xl overflow-hidden cursor-pointer group shadow-[0_0_20px_rgba(0,0,0,0.5)]"
             whileHover={{ 
               y: -10, 
               scale: 1.02,
@@ -194,13 +194,13 @@ export function ProjectsStack() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="absolute inset-0 bg-black/80 backdrop-blur-md"
+              className="absolute inset-0 bg-black/85"
               onClick={() => setSelectedProject(null)}
             />
 
             <motion.div
               layoutId={`project-${selectedProject.id}`}
-              className="relative w-full max-w-4xl max-h-[90vh] bg-[#0a0a0a]/90 backdrop-blur-3xl border border-[#ff8c00]/40 rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(255,140,0,0.2)] flex flex-col md:flex-row z-10"
+              className="relative w-full max-w-4xl max-h-[90vh] bg-[#0a0a0a] border border-[#ff8c00]/40 rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(255,140,0,0.2)] flex flex-col md:flex-row z-10"
             >
               {/* Image Side */}
               <div className="w-full md:w-1/2 h-64 md:h-auto bg-black relative overflow-hidden group">
