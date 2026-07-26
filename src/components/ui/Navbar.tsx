@@ -13,7 +13,7 @@ const navItems = [
     label: 'Home',
     icon: (
       <div className="w-6 h-6 flex items-center justify-center rounded-full bg-black shadow-lg overflow-hidden border border-white/20">
-        <img src="/icon.svg" alt="Home" className="w-full h-full object-cover scale-110" />
+        <img src="/logo.jpg" alt="Home" className="w-full h-full object-cover scale-110" />
       </div>
     )
   },
@@ -70,7 +70,7 @@ const joinNavItems = [
     label: 'Home', 
     icon: (
       <div className="w-6 h-6 flex items-center justify-center rounded-full bg-black shadow-lg overflow-hidden border border-white/20">
-        <img src="/icon.svg" alt="Home" className="w-full h-full object-cover scale-110" />
+        <img src="/logo.jpg" alt="Home" className="w-full h-full object-cover scale-110" />
       </div>
     ),
     href: '/'

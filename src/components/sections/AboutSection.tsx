@@ -78,7 +78,7 @@ export function AboutSection() {
     <div id="about" className="relative w-full">
       <section
         ref={containerRef}
-        className="relative min-h-screen flex items-center justify-center overflow-hidden"
+        className="relative min-h-fit md:min-h-screen flex items-center justify-center overflow-hidden py-16 md:py-0"
         style={{ background: 'transparent' }}
       >
         <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">

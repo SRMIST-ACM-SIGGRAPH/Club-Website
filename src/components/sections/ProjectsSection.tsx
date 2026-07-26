@@ -37,7 +37,7 @@ export function ProjectsSection() {
   }, []);
 
   return (
-    <section ref={sectionRef} id="projects" className="relative w-full py-24 px-6 md:px-12 z-20 min-h-[80vh] overflow-hidden" style={{ clipPath: 'circle(150% at 50% 0%)' }}>
+    <section ref={sectionRef} id="projects" className="relative w-full py-16 md:py-24 px-6 md:px-12 z-20 min-h-fit overflow-hidden" style={{ clipPath: 'circle(150% at 50% 0%)' }}>
       <div className="max-w-7xl mx-auto flex flex-col items-center">
         {/* Section Header */}
         <div className="w-full text-center mb-16">

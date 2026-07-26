@@ -2,7 +2,7 @@ import { EventsGrid } from './../events/EventsGrid';
 
 export function EventsSection() {
   return (
-    <section id="events" className="relative w-full py-24 px-6 md:px-12 z-20 min-h-screen">
+    <section id="events" className="relative w-full py-16 md:py-24 px-6 md:px-12 z-20 min-h-fit">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-16">
