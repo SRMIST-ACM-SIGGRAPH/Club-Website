@@ -1,0 +1,226 @@
+{
+  "facultyCoordinator": {
+    "name": "Dr. Jane Doe",
+    "photo": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400&auto=format&fit=crop",
+    "role": "Faculty Coordinator",
+    "socials": {
+      "instagram": "#",
+      "linkedin": "#",
+      "github": "#"
+    }
+  },
+  "hod": {
+    "name": "Dr. John Smith",
+    "photo": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=400&auto=format&fit=crop",
+    "role": "HOD",
+    "socials": {
+      "instagram": "#",
+      "linkedin": "#",
+      "github": "#"
+    }
+  },
+  "boardMembers": [
+    {
+      "name": "Indronath Basu",
+      "photo": "/images/team/indronath_basu.jpg",
+      "role": "Chair",
+      "socials": {
+        "instagram": "https://www.instagram.com/thats_indro/",
+        "linkedin": "https://www.linkedin.com/in/indronathbasu/",
+        "github": "https://github.com/IndronathBasu"
+      }
+    },
+    {
+      "name": "Ishaan Bakshi",
+      "photo": "/images/team/ishaan_bakshi.jpg",
+      "role": "Vice Chair",
+      "socials": {
+        "instagram": "https://www.instagram.com/ishaan_bakshi017?igsh=N282amowbTEybWwz",
+        "linkedin": "https://www.linkedin.com/in/ishaanbakshi",
+        "github": "https://share.google/yK2wf9Aj6lWEU8IkW"
+      }
+    },
+    {
+      "name": "Viraj Deglurkar",
+      "photo": "/images/team/viraj_deglurkar.jpg",
+      "role": "Secretary",
+      "socials": {
+        "instagram": "",
+        "linkedin": "https://www.linkedin.com/in/viraj-deglurkar/",
+        "github": "https://github.com/Virajjj646"
+      }
+    },
+    {
+      "name": "Soumil Mehrotra",
+      "photo": "/images/team/soumil_mehrotra.jpg",
+      "role": "Treasurer",
+      "objectPosition": "center 45%",
+      "socials": {
+        "instagram": "https://www.instagram.com/soumil_26m?igsh=cnExaDFlZGxnZXM4",
+        "linkedin": "https://www.linkedin.com/in/soumil-mehrotra-72623131b/",
+        "github": "https://github.com/TheDaredevil26"
+      }
+    },
+    {
+      "name": "Aadi Mandavia",
+      "photo": "/images/team/aadi_mandavia.jpg",
+      "role": "Web Master",
+      "socials": {
+        "instagram": "https://www.instagram.com/aadimandavia?igsh=NzcxM3poOWE3NDB1",
+        "linkedin": "https://www.linkedin.com/in/aadi-mandavia-006571259",
+        "github": "https://github.com/aadimandavia"
+      }
+    },
+    {
+      "name": "AARYAN SOLANKI",
+      "photo": "/images/team/aaryan_solanki.jpg",
+      "role": "Membership Chair",
+      "socials": {
+        "instagram": "https://www.instagram.com/aaryan._.solanki",
+        "linkedin": "https://www.linkedin.com/in/aaryan-solanki-it",
+        "github": "https://github.com/aaryan-cloud"
+      }
+    }
+  ],
+  "domains": [
+    {
+      "domainName": "R&D",
+      "head": {
+        "name": "Rimil Bhattacharya",
+        "photo": "/images/team/rimil_bhattacharya.jpg",
+        "role": "Head",
+        "socials": {
+          "instagram": "https://www.instagram.com/rimil0bx/",
+          "linkedin": "https://www.linkedin.com/in/rimilbhattacharya",
+          "github": "https://github.com/RIMIL08X"
+        }
+      },
+      "leads": [
+        {
+          "name": "Aryan Mishra",
+          "photo": "/images/team/aryan_mishra.jpg",
+          "role": "Lead",
+          "socials": {
+            "instagram": "https://www.instagram.com/4ryan.mishra?igsh=MXgwM2EwcjE3N29qbA==",
+            "linkedin": "https://www.linkedin.com/in/4ryanmishra?utm_source=share_via&utm_content=profile&utm_medium=member_android",
+            "github": "https://github.com/4ryanMishra"
+          }
+        },
+        {
+          "name": "Devanshu Lingwal",
+          "photo": "/images/team/devanshu_lingwal.jpg",
+          "role": "Lead",
+          "socials": {
+            "instagram": "https://www.instagram.com/o23.dev/",
+            "linkedin": "https://www.linkedin.com/in/devanshu-lingwal-5ab1b1422/",
+            "github": "https://github.com/CoderDevOp"
+          }
+        }
+      ]
+    },
+    {
+      "domainName": "Web Dev",
+      "head": {
+        "name": "Aryan Kamboj",
+        "photo": "/images/team/aryan_kamboj.jpg",
+        "role": "Head",
+        "socials": {
+          "instagram": "https://www.instagram.com/__aryan_kamboj?igsh=dmo3bG9tZTRwamh2",
+          "linkedin": "https://linkedin.com/in/aryankamboj2006",
+          "github": "https://github.com/BREAD-06"
+        }
+      },
+      "leads": [
+        {
+          "name": "Subhodeep Mallick",
+          "photo": "/images/team/subhodeep_mallick.jpg",
+          "role": "Lead",
+          "socials": {
+            "instagram": "https://www.instagram.com/subhodeepmallickk?igsh=MjN5bnFmYWhjZzUw&utm_source=qr",
+            "linkedin": "https://linkedin.com/in/subhodeep-mallick-64428b365",
+            "github": "https://github.com/SUBHODEEP31"
+          }
+        },
+        {
+          "name": "Garv Rahut",
+          "photo": "/images/team/garv_rahut.jpg",
+          "role": "Lead",
+          "socials": {
+            "instagram": "https://www.instagram.com/garv_767?",
+            "linkedin": "https://www.linkedin.com/in/garv767",
+            "github": "https://github.com/garv767"
+          }
+        }
+      ]
+    },
+    {
+      "domainName": "Corporate",
+      "head": {
+        "name": "Natansh",
+        "photo": "/images/team/natansh.jpg",
+        "role": "Head",
+        "socials": {
+          "instagram": "https://www.instagram.com/natansh.111?igsh=MTBkMXI1YmI4dnU0OA==",
+          "linkedin": "https://www.linkedin.com/in/natansh0044/",
+          "github": "https://github.com/Natansh11"
+        }
+      },
+      "leads": [
+        {
+          "name": "Akanksha Dholwani",
+          "photo": "/images/team/akanksha_dholwani.jpg",
+          "role": "Lead",
+          "socials": {
+            "instagram": "https://www.instagram.com/akankshaaxx/",
+            "linkedin": "https://www.linkedin.com/in/akanksha-dholwani/",
+            "github": "https://github.com/akankshaxa"
+          }
+        },
+        {
+          "name": "Harshit",
+          "photo": "/images/team/harshit.jpg",
+          "role": "Lead",
+          "socials": {
+            "instagram": "https://www.instagram.com/harshit_arora.__?igsh=ODlnc2huNzFxYzQz",
+            "linkedin": "https://www.linkedin.com/in/harshit-arora-760a90252",
+            "github": "https://github.com/HarshitAr16"
+          }
+        }
+      ]
+    },
+    {
+      "domainName": "Creatives",
+      "head": {
+        "name": "Drishti Gupta",
+        "photo": "/images/team/drishti_gupta.jpg",
+        "role": "Head",
+        "socials": {
+          "instagram": "https://www.instagram.com/drxshtx._?igsh=MThjOWtyYnFla2lwdQ==",
+          "linkedin": "https://www.linkedin.com/in/drishti-gupta-84b366271",
+          "github": "https://github.com/drishtigupta05"
+        }
+      },
+      "leads": [
+        {
+          "name": "Cyan Benny",
+          "photo": "/images/team/cyan_benny.jpg",
+          "role": "Lead",
+          "socials": {
+            "instagram": "https://www.instagram.com/cyan.benny",
+            "linkedin": "https://www.linkedin.com/in/cyan-benny-93664535b?utm_source=share_via&utm_content=profile&utm_medium=member_ios",
+            "github": "https://github.com/cyanbenny"
+          }
+        },
+        {
+          "name": "Sanjana Pandey",
+          "photo": "/images/team/sanjana_pandey.jpg",
+          "role": "Lead",
+          "socials": {
+            "instagram": "https://www.instagram.com/sanjanaa.pandey?igsh=MW4zajhoZHlxM201",
+            "linkedin": "https://www.linkedin.com/in/sanjana-pandey-1218a231a?utm_source=share_via&utm_content=profile&utm_medium=member_android"
+          }
+        }
+      ]
+    }
+  ]
+}
