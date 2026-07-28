@@ -55,7 +55,7 @@ export function ContactSection() {
     },
     {
       id: 'linkedin',
-      label: 'ACM SIGGRAPH SRM',
+      label: 'SRMIST ACM SIGGRAPH',
       href: 'https://www.linkedin.com/company/srmist-acm-siggraph-student-chapter/',
       color: '#0077b5', // Blue pulse for linkedin
       renderIcon: (isHovered: boolean) => (

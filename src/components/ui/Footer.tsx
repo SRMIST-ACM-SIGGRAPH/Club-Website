@@ -12,7 +12,7 @@ export function Footer() {
           {/* Brand */}
           <div>
             <h3 className="text-lg font-bold tracking-widest uppercase text-white">
-              ACM SIGGRAPH <span className="font-light text-[#ff8c00]">SRM</span>
+              SRMIST ACM <span className="font-light text-[#ff8c00]">SIGGRAPH</span>
             </h3>
             <p className="mt-2 text-sm text-white/40 max-w-sm mx-auto leading-relaxed">
               Exploring the boundaries of computer graphics, interactive techniques, and digital art.
@@ -21,7 +21,7 @@ export function Footer() {
 
           {/* Copyright */}
           <div className="mt-6 pt-6 border-t border-white/5 text-center text-xs text-white/20 w-full max-w-md mx-auto" style={{ fontFamily: 'var(--font-geist-mono)' }}>
-            © {new Date().getFullYear()} ACM SIGGRAPH SRM. All rights reserved.
+            © {new Date().getFullYear()} SRMIST ACM SIGGRAPH. All rights reserved.
           </div>
         </div>
       </div>
