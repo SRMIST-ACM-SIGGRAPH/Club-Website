@@ -1,8 +1,8 @@
-import { EventsGrid } from './../events/EventsGrid';
+import { ComingSoonBanner } from '@/components/ui/ComingSoonBanner';
 
 export function EventsSection() {
   return (
-    <section id="events" className="relative w-full py-24 px-6 md:px-12 z-20 min-h-screen">
+    <section id="events" className="relative w-full py-16 md:py-24 px-6 md:px-12 z-20 min-h-fit overflow-hidden">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-16">
@@ -15,7 +15,7 @@ export function EventsSection() {
         </div>
 
         {/* Dynamic Events Grid with Modals */}
-        <EventsGrid />
+        <ComingSoonBanner message="Our team is currently organizing and planning upcoming events and meetups. Check back soon for official announcements!" />
       </div>
 
       {/* Decorative blurry background element */}

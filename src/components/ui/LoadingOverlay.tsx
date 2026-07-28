@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -65,8 +66,10 @@ export function LoadingOverlay() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isVisible, setIsVisible] = useState(true);
   const rafRef = useRef<number>(0);
+  const pathname = usePathname();
 
   useEffect(() => {
+    if (pathname === '/join') return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -402,9 +405,9 @@ export function LoadingOverlay() {
       window.removeEventListener('resize', resize);
       document.body.style.overflow = '';
     };
-  }, []);
+  }, [pathname]);
 
-  if (!isVisible) return null;
+  if (!isVisible || pathname === '/join') return null;
 
   return (
     <canvas

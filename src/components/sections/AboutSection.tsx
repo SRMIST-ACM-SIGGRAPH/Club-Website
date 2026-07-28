@@ -109,7 +109,7 @@ export function AboutSection() {
             About Us
           </h2>
           <p className="text-lg text-neutral-300 leading-relaxed font-sans">
-            We are a community of creators, developers, and visionaries pushing the boundaries of interactive media. ACM SIGGRAPH SRM is dedicated to the advancement of computer graphics, animation, UI/UX, and emerging digital frontiers.
+            We are a community of creators, developers, and visionaries pushing the boundaries of interactive media. SRMIST ACM SIGGRAPH is dedicated to the advancement of computer graphics, animation, UI/UX, and emerging digital frontiers.
           </p>
           <p className="text-lg text-neutral-300 leading-relaxed font-sans">
             Our mission is to foster innovation by providing a collaborative platform where students can build, design, and explore the technologies that will shape tomorrow's digital experiences.

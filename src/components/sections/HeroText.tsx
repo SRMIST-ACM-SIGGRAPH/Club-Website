@@ -38,6 +38,12 @@ export function HeroText() {
 
   return (
     <div ref={wrapperRef} className="absolute inset-0 pointer-events-none">
+      {/* Logos Container */}
+      <div className="absolute top-6 left-6 md:top-10 md:left-10 flex items-center gap-4 md:gap-6 z-50 pointer-events-auto">
+        <img src="/images/srm-logo-white.svg" alt="SRM Logo" className="h-10 md:h-14 w-auto object-contain" />
+        <img src="/images/siggraph-logo-left.svg" alt="ACM SIGGRAPH Logo" className="h-10 md:h-14 w-auto object-contain" />
+      </div>
+
       <div ref={scrollFadeRef} className="absolute inset-0 flex flex-col items-center justify-end pb-[14vh]">
         {/* Scroll hint */}
         <div className="mt-10 flex flex-col items-center gap-1 opacity-40">

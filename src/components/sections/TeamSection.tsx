@@ -101,7 +101,7 @@ function PersonCard({ person, size = 'medium', className = '' }: { person: any, 
       <h3 className={`font-bold text-white tracking-wide ${size === 'small' ? 'text-base' : 'text-lg'}`}>{person.name}</h3>
       <p className="text-[#FF6B1A] font-mono text-xs md:text-sm tracking-wider mt-1 mb-3" style={{ textShadow: '0 0 10px rgba(255,107,26,0.5)' }}>{person.role}</p>
       
-      <div className="flex space-x-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+      <div className="flex space-x-3 sm:space-x-4 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
         {person.socials.instagram && (
           <a href={person.socials.instagram} target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-[#FF6B1A] hover:drop-shadow-[0_0_8px_rgba(255,107,26,0.8)] transition-all">
             <InstagramIcon className="w-4 h-4 md:w-5 md:h-5" />

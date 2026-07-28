@@ -2,6 +2,7 @@
 
 import { useRef, useCallback } from 'react';
 import dynamic from 'next/dynamic';
+import { HeroText } from '@/components/sections/HeroText';
 
 // Load the 3D canvas client-side only (no SSR — Three.js needs window)
 const HeroScene = dynamic(
@@ -43,6 +44,7 @@ export function HeroSection() {
       />
       {/* 3D Canvas — transparent, just the holographic logo */}
       <HeroScene mouseX={mouseX} mouseY={mouseY} />
+      <HeroText />
     </section>
   );
 }

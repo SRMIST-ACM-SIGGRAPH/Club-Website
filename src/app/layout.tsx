@@ -18,8 +18,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ACM SIGGRAPH SRM",
-  description: "Official website for the ACM SIGGRAPH SRM Tech Club",
+  title: "SRMIST ACM SIGGRAPH",
+  description: "Official website for the SRMIST ACM SIGGRAPH Tech Club",
 };
 
 export default function RootLayout({
