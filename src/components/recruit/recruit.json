@@ -1,0 +1,25 @@
+{
+  "global_sync": true,
+  "global_settings": {
+    "is_open": true,
+    "deadline": "2026-08-01T23:59:59+05:30"
+  },
+  "domains": {
+    "Web Development": {
+      "is_open": true,
+      "deadline": "2026-08-01T23:59:59+05:30"
+    },
+    "Corporate": {
+      "is_open": false,
+      "deadline": "2026-07-15T23:59:59+05:30"
+    },
+    "Creatives": {
+      "is_open": true,
+      "deadline": "2026-08-10T23:59:59+05:30"
+    },
+    "R&D": {
+      "is_open": true,
+      "deadline": "2026-08-01T23:59:59+05:30"
+    }
+  }
+}

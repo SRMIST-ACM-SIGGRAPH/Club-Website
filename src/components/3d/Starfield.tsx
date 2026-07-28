@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useMemo, useEffect } from 'react';
+import { useRef, useMemo, useEffect, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import gsap from 'gsap';
@@ -25,20 +25,20 @@ export function Starfield({ mouseX, mouseY }: StarfieldProps) {
     });
   }, []);
 
-  const [positions, sizes] = useMemo(() => {
+  const [[positions, sizes]] = useState(() => {
     const count = 200;
-    const positions = new Float32Array(count * 3);
-    const sizes = new Float32Array(count);
+    const pos = new Float32Array(count * 3);
+    const sz = new Float32Array(count);
 
     for (let i = 0; i < count; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 30;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 15 - 5;
-      sizes[i] = Math.random() * 0.04 + 0.01;
+      pos[i * 3] = (Math.random() - 0.5) * 30;
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 20;
+      pos[i * 3 + 2] = (Math.random() - 0.5) * 15 - 5;
+      sz[i] = Math.random() * 0.04 + 0.01;
     }
 
-    return [positions, sizes];
-  }, []);
+    return [pos, sz];
+  });
 
   useFrame(() => {
     if (!groupRef.current) return;

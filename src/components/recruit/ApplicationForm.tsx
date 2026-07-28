@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 import { User } from '@supabase/supabase-js';
@@ -10,6 +10,8 @@ import recruitConfig from './recruit.json';
 
 type FormData = {
   id?: string; // Present if editing
+  user_id?: string;
+  created_at?: string;
   full_name: string;
   srm_email: string;
   registration_number: string;
@@ -38,7 +40,7 @@ export function ApplicationForm() {
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
   
   // Dashboard state
-  const [existingApps, setExistingApps] = useState<any[]>([]);
+  const [existingApps, setExistingApps] = useState<FormData[]>([]);
   const [isViewingDashboard, setIsViewingDashboard] = useState(false);
 
   // Form state
@@ -66,6 +68,24 @@ export function ApplicationForm() {
     checkStatus();
   }, []);
 
+  const fetchApplications = useCallback(async (userId: string) => {
+    setIsLoadingAuth(true);
+    try {
+      const { data } = await supabase
+        .from('applications')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+      
+      if (data && data.length > 0) {
+        setExistingApps(data);
+        setIsViewingDashboard(true);
+      }
+    } finally {
+      setIsLoadingAuth(false);
+    }
+  }, []);
+
   // 1. Auth check
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -82,25 +102,7 @@ export function ApplicationForm() {
     });
 
     return () => subscription.unsubscribe();
-  }, []);
-
-  const fetchApplications = async (userId: string) => {
-    setIsLoadingAuth(true);
-    try {
-      const { data } = await supabase
-        .from('applications')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false });
-      
-      if (data && data.length > 0) {
-        setExistingApps(data);
-        setIsViewingDashboard(true);
-      }
-    } finally {
-      setIsLoadingAuth(false);
-    }
-  };
+  }, [fetchApplications]);
 
   // 2. Local Storage Sync (only if NOT editing)
   useEffect(() => {
@@ -108,8 +110,9 @@ export function ApplicationForm() {
     const saved = localStorage.getItem('recruit_form_data');
     if (saved) {
       try {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setFormData(JSON.parse(saved));
-      } catch (e) {
+      } catch {
         console.error('Failed to parse saved form data');
       }
     }
@@ -178,11 +181,10 @@ export function ApplicationForm() {
       }
       
       if (formData.domain_preference) {
-        const questions = (domainQuestions as any)[formData.domain_preference] || [];
-        questions.forEach((q: any) => {
-          if (q.required && !formData.domain_answers[q.id]?.trim()) {
-            // we store dynamic errors by prefixing them to avoid key conflicts
-            (newErrors as any)[`domain_${q.id}`] = "Required";
+        const questions = (domainQuestions as Record<string, {id: string, required?: boolean}[]>)[formData.domain_preference] || [];
+        questions.forEach((q) => {
+          if (q.required !== false && !formData.domain_answers[q.id]?.trim()) {
+            (newErrors as Record<string, string>)[`domain_${q.id}`] = "Required";
             isValid = false;
           }
         });
@@ -257,7 +259,7 @@ export function ApplicationForm() {
     }
   };
 
-  const startEdit = (app: any) => {
+  const startEdit = (app: FormData) => {
     setFormData(app);
     setStep(1);
     setIsViewingDashboard(false);
@@ -358,7 +360,7 @@ export function ApplicationForm() {
             <div key={app.id} className="p-4 border border-white/10 bg-white/5 rounded-xl flex justify-between items-center">
               <div>
                 <h3 className="text-lg text-[#FF6B1A] font-bold">{app.domain_preference}</h3>
-                <p className="text-white/50 text-sm">Submitted on {new Date(app.created_at).toLocaleDateString()}</p>
+                <p className="text-white/50 text-sm">Submitted on {app.created_at ? new Date(app.created_at).toLocaleDateString() : 'Unknown date'}</p>
               </div>
               <button onClick={() => startEdit(app)} className="px-4 py-2 bg-white/10 text-white rounded hover:bg-white/20 transition-colors text-sm">
                 Edit
@@ -478,7 +480,7 @@ export function ApplicationForm() {
 
                         // Check deadlines
                         const now = new Date();
-                        const config = (recruitConfig.domains as any)[domain];
+                        const config = (recruitConfig.domains as Record<string, {is_open: boolean, deadline: string}>)[domain];
                         const isOpenGlobally = recruitConfig.global_settings.is_open && new Date(recruitConfig.global_settings.deadline) > now;
                         const isOpenLocally = config?.is_open && new Date(config?.deadline) > now;
                         
@@ -498,7 +500,7 @@ export function ApplicationForm() {
                   {formData.domain_preference && (
                     <div className="space-y-4 pt-4 border-t border-white/10">
                       <h4 className="text-white font-medium mb-2">Domain Specific Questions</h4>
-                      {((domainQuestions as any)[formData.domain_preference] || []).map((q: any) => (
+                      {((domainQuestions as Record<string, {id: string, label: string, type: string, required?: boolean, placeholder?: string}[]>)[formData.domain_preference] || []).map((q) => (
                         <div key={q.id}>
                           <label className="block text-white/70 text-sm mb-1">
                             {q.label} {q.required && '*'}
@@ -521,7 +523,9 @@ export function ApplicationForm() {
                             />
                           )}
                           {/* Display specific error if missing */}
-                          {(errors as any)[`domain_${q.id}`] && <p className="text-red-400 text-xs mt-1">{(errors as any)[`domain_${q.id}`]}</p>}
+                          {
+                            (errors as Record<string, string>)[`domain_${q.id}`] && <p className="text-red-400 text-xs mt-1">{(errors as Record<string, string>)[`domain_${q.id}`]}</p>
+                          }
                         </div>
                       ))}
                     </div>

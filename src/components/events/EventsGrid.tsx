@@ -115,7 +115,7 @@ export function EventsGrid() {
               className="relative w-full max-w-4xl max-h-[85vh] bg-neutral-950 border border-orange-500/30 rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(249,115,22,0.15)] flex flex-col md:flex-row"
             >
               {/* Left Side - Poster */}
-              <div className="relative w-full md:w-1/2 aspect-video md:aspect-auto h-64 md:h-full shrink-0">
+              <div className="relative w-full md:w-1/2 h-64 md:h-auto md:min-h-[400px] shrink-0 self-stretch">
                 <Image
                   src={selectedEvent.poster_url}
                   alt={selectedEvent.title}

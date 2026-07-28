@@ -105,7 +105,7 @@ export function ContactSection() {
   ];
 
   return (
-    <section id="contact" className="relative min-h-[60vh] flex flex-col items-center justify-center overflow-hidden py-24" style={{ background: 'transparent' }}>
+    <section id="contact" className="relative min-h-fit flex flex-col items-center justify-center overflow-hidden py-16 md:py-24" style={{ background: 'transparent' }}>
       
       {/* Terminal background element */}
       <div className="absolute inset-0 max-w-4xl mx-auto h-full flex flex-col items-center justify-center opacity-30 pointer-events-none z-0">
