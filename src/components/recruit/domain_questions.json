@@ -1,0 +1,66 @@
+{
+  "Web Development": [
+    {
+      "id": "github_portfolio",
+      "label": "Link to your GitHub or Portfolio",
+      "type": "url",
+      "required": true,
+      "placeholder": "https://github.com/..."
+    },
+    {
+      "id": "framework_exp",
+      "label": "Which frameworks/languages are you most comfortable with?",
+      "type": "text",
+      "required": true,
+      "placeholder": "React, Next.js, Node, etc."
+    }
+  ],
+  "Corporate": [
+    {
+      "id": "resume_linkedin",
+      "label": "Link to your Resume or LinkedIn",
+      "type": "url",
+      "required": true,
+      "placeholder": "https://linkedin.com/in/..."
+    },
+    {
+      "id": "management_exp",
+      "label": "Describe any past experience with event management or sponsorships",
+      "type": "textarea",
+      "required": false,
+      "placeholder": "I helped organize..."
+    }
+  ],
+  "Creatives": [
+    {
+      "id": "design_portfolio",
+      "label": "Link to your Behance, Dribbble, or Drive portfolio",
+      "type": "url",
+      "required": true,
+      "placeholder": "https://behance.net/..."
+    },
+    {
+      "id": "software_skills",
+      "label": "Which creative software are you most proficient in?",
+      "type": "text",
+      "required": true,
+      "placeholder": "Figma, Blender, Premiere Pro, etc."
+    }
+  ],
+  "R&D": [
+    {
+      "id": "research_interests",
+      "label": "What are your primary research interests?",
+      "type": "textarea",
+      "required": true,
+      "placeholder": "Computer Vision, Machine Learning, Computer Graphics, etc."
+    },
+    {
+      "id": "past_projects",
+      "label": "Link to any research papers, technical blogs, or past projects",
+      "type": "url",
+      "required": false,
+      "placeholder": "https://..."
+    }
+  ]
+}

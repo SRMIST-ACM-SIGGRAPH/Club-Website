@@ -30,9 +30,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
+      className={`${geistSans.variable} ${geistMono.variable} antialiased dark`}
     >
-      <body className="min-h-full flex flex-col font-sans bg-[#050505]">
+      <body className="flex flex-col font-sans bg-[#050505]">
         <LenisProvider>
           <LoadingOverlay />
           {/* Fixed background — always mounted, never unmounts between sections */}
@@ -44,6 +44,7 @@ export default function RootLayout({
             <main className="flex-grow">
               {children}
             </main>
+            <Footer />
           </div>
         </LenisProvider>
       </body>

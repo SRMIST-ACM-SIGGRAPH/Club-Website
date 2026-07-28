@@ -78,7 +78,7 @@ export function AboutSection() {
     <div id="about" className="relative w-full">
       <section
         ref={containerRef}
-        className="relative min-h-screen flex items-center justify-center overflow-hidden"
+        className="relative min-h-fit md:min-h-screen flex items-center justify-center overflow-hidden py-16 md:py-0"
         style={{ background: 'transparent' }}
       >
         <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
@@ -112,7 +112,7 @@ export function AboutSection() {
             We are a community of creators, developers, and visionaries pushing the boundaries of interactive media. SRMIST ACM SIGGRAPH is dedicated to the advancement of computer graphics, animation, UI/UX, and emerging digital frontiers.
           </p>
           <p className="text-lg text-neutral-300 leading-relaxed font-sans">
-            Our mission is to foster innovation by providing a collaborative platform where students can build, design, and explore the technologies that will shape tomorrow's digital experiences.
+            Our mission is to foster innovation by providing a collaborative platform where students can build, design, and explore the technologies that will shape tomorrow&apos;s digital experiences.
           </p>
           <div className="pt-4">
             <button className="px-8 py-3 rounded-full bg-transparent border border-[#00ffcc] text-[#00ffcc] hover:bg-[#00ffcc] hover:text-[#050505] transition-all duration-300 font-mono text-sm uppercase tracking-wider font-bold">

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useMemo, useEffect } from 'react';
+import { useRef, useMemo, useEffect, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import * as THREE from 'three';
@@ -14,18 +14,18 @@ function BackgroundStarfield() {
   const groupRef = useRef<THREE.Group>(null);
   const materialRef = useRef<THREE.PointsMaterial>(null);
 
-  const [positions, sizes] = useMemo(() => {
+  const [[positions, sizes]] = useState(() => {
     const count = 300;
-    const positions = new Float32Array(count * 3);
-    const sizes = new Float32Array(count);
+    const pos = new Float32Array(count * 3);
+    const sz = new Float32Array(count);
     for (let i = 0; i < count; i++) {
-      positions[i * 3]     = (Math.random() - 0.5) * 40;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 30;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 20 - 5;
-      sizes[i] = Math.random() * 0.04 + 0.01;
+      pos[i * 3]     = (Math.random() - 0.5) * 40;
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 30;
+      pos[i * 3 + 2] = (Math.random() - 0.5) * 20 - 5;
+      sz[i] = Math.random() * 0.04 + 0.01;
     }
-    return [positions, sizes];
-  }, []);
+    return [pos, sz];
+  });
 
   // Fade in on mount
   useEffect(() => {
@@ -148,10 +148,13 @@ function ParallaxRig({ scrollProgress }: { scrollProgress: React.MutableRefObjec
     
     // Deep dive down the Y axis as user scrolls
     const targetY = -t * 35; 
+    // eslint-disable-next-line react-hooks/immutability
     camera.position.y += (targetY - camera.position.y) * 0.05;
     
     // Subtle cinematic zoom out and horizontal drift
+    // eslint-disable-next-line react-hooks/immutability
     camera.position.z = 7 + t * 5; 
+    // eslint-disable-next-line react-hooks/immutability
     camera.position.x = Math.sin(t * Math.PI) * 3;
     
     // Keep looking forward

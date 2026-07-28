@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import teamData from '@/data/team.json';
 
 // Register GSAP plugin
 if (typeof window !== 'undefined') {
@@ -33,73 +34,46 @@ const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-// --- Dummy Data ---
-const P_PHOTO = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400&auto=format&fit=crop";
-const M_PHOTO = "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=400&auto=format&fit=crop";
-
-const teamData = {
-  facultyCoordinator: { name: "Dr. Jane Doe", photo: P_PHOTO, role: "Faculty Coordinator", socials: { instagram: "#", linkedin: "#", github: "#" } },
-  hod: { name: "Dr. John Smith", photo: M_PHOTO, role: "HOD", socials: { instagram: "#", linkedin: "#", github: "#" } },
-  boardMembers: [
-    { name: "Alice Adams", photo: P_PHOTO, role: "President", socials: { instagram: "#", linkedin: "#", github: "#" } },
-    { name: "Bob Brown", photo: M_PHOTO, role: "Vice President", socials: { instagram: "#", linkedin: "#", github: "#" } },
-    { name: "Charlie Clark", photo: M_PHOTO, role: "Secretary", socials: { instagram: "#", linkedin: "#", github: "#" } },
-    { name: "Diana Davis", photo: P_PHOTO, role: "Treasurer", socials: { instagram: "#", linkedin: "#", github: "#" } },
-    { name: "Eve Evans", photo: P_PHOTO, role: "Director", socials: { instagram: "#", linkedin: "#", github: "#" } },
-    { name: "Frank Ford", photo: M_PHOTO, role: "Director", socials: { instagram: "#", linkedin: "#", github: "#" } },
-  ],
-  domains: [
-    {
-      domainName: "Technical",
-      head: { name: "Grace Green", photo: P_PHOTO, role: "Technical Head", socials: { instagram: "#", linkedin: "#", github: "#" } },
-      leads: [
-        { name: "Harry Hill", photo: M_PHOTO, role: "Tech Lead", socials: { instagram: "#", linkedin: "#", github: "#" } },
-        { name: "Ivy Irwin", photo: P_PHOTO, role: "Tech Lead", socials: { instagram: "#", linkedin: "#", github: "#" } }
-      ]
-    },
-    {
-      domainName: "Events",
-      head: { name: "Jack Jones", photo: M_PHOTO, role: "Events Head", socials: { instagram: "#", linkedin: "#", github: "#" } },
-      leads: [
-        { name: "Karen King", photo: P_PHOTO, role: "Events Lead", socials: { instagram: "#", linkedin: "#", github: "#" } },
-        { name: "Leo Lewis", photo: M_PHOTO, role: "Events Lead", socials: { instagram: "#", linkedin: "#", github: "#" } }
-      ]
-    },
-    {
-      domainName: "Creatives",
-      head: { name: "Mia Moore", photo: P_PHOTO, role: "Creatives Head", socials: { instagram: "#", linkedin: "#", github: "#" } },
-      leads: [
-        { name: "Noah Nelson", photo: M_PHOTO, role: "Design Lead", socials: { instagram: "#", linkedin: "#", github: "#" } },
-        { name: "Olivia Owen", photo: P_PHOTO, role: "Video Lead", socials: { instagram: "#", linkedin: "#", github: "#" } }
-      ]
-    },
-    {
-      domainName: "Management",
-      head: { name: "Pete Perez", photo: M_PHOTO, role: "Management Head", socials: { instagram: "#", linkedin: "#", github: "#" } },
-      leads: [
-        { name: "Quinn Quinn", photo: P_PHOTO, role: "PR Lead", socials: { instagram: "#", linkedin: "#", github: "#" } },
-        { name: "Ryan Reed", photo: M_PHOTO, role: "Logistics Lead", socials: { instagram: "#", linkedin: "#", github: "#" } }
-      ]
-    }
-  ]
+// --- Components ---
+type Person = {
+  name: string;
+  photo: string;
+  role: string;
+  scale?: number;
+  objectPosition?: string;
+  socials: {
+    instagram?: string;
+    linkedin?: string;
+    github?: string;
+  };
 };
 
-// --- Components ---
-
-function PersonCard({ person, size = 'medium', className = '' }: { person: any, size?: 'large' | 'medium' | 'small', className?: string }) {
+function PersonCard({ person, size = 'medium', className = '' }: { person: Person, size?: 'large' | 'medium' | 'small', className?: string }) {
   const sizeClasses = {
-    large: 'w-40 h-40 md:w-48 md:h-48',
-    medium: 'w-28 h-28 md:w-32 md:h-32',
-    small: 'w-20 h-20 md:w-24 md:h-24',
+    large: 'w-48 h-48 md:w-56 md:h-56',
+    medium: 'w-32 h-32 md:w-36 md:h-36 lg:w-40 lg:h-40',
+    small: 'w-24 h-24 md:w-26 md:h-26 lg:w-28 lg:h-28',
   };
+
+  const baseScale = person.scale || 1;
+  const hoverScale = baseScale * 1.1;
 
   return (
     <div className={`group flex flex-col items-center text-center ${className}`}>
       <div className={`relative rounded-full overflow-hidden mb-4 border border-[#FF6B1A]/30 shadow-[0_0_15px_rgba(255,107,26,0.15)] transition-all duration-500 group-hover:scale-105 group-hover:border-[#FF6B1A] group-hover:shadow-[0_0_30px_rgba(255,107,26,0.6)] ${sizeClasses[size]}`}>
-        <img src={person.photo} alt={person.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+        <img 
+          src={person.photo} 
+          alt={person.name} 
+          className="w-full h-full object-cover transition-transform duration-700 origin-center [transform:scale(var(--img-scale))] group-hover:[transform:scale(var(--img-hover-scale))]" 
+          style={{
+            objectPosition: person.objectPosition || 'center 20%',
+            '--img-scale': baseScale,
+            '--img-hover-scale': hoverScale
+          } as React.CSSProperties}
+        />
       </div>
-      <h3 className={`font-bold text-white tracking-wide ${size === 'small' ? 'text-base' : 'text-lg'}`}>{person.name}</h3>
-      <p className="text-[#FF6B1A] font-mono text-xs md:text-sm tracking-wider mt-1 mb-3" style={{ textShadow: '0 0 10px rgba(255,107,26,0.5)' }}>{person.role}</p>
+      <h3 className={`font-bold text-white tracking-wide whitespace-nowrap ${size === 'small' ? 'text-xs sm:text-sm md:text-base' : 'text-base md:text-lg'}`}>{person.name}</h3>
+      <p className="text-[#FF6B1A] font-mono text-xs md:text-sm tracking-wider mt-1 mb-3 whitespace-nowrap" style={{ textShadow: '0 0 10px rgba(255,107,26,0.5)' }}>{person.role}</p>
       
       <div className="flex space-x-3 sm:space-x-4 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
         {person.socials.instagram && (
@@ -136,85 +110,60 @@ export function TeamSection() {
       // 1. Dividers expanding effect
       dividersRef.current.forEach((divider) => {
         if (!divider) return;
-        const line = divider.querySelector('.divider-line');
-        gsap.fromTo(line, 
-          { scaleX: 0 },
+
+        gsap.fromTo(
+          divider.querySelector('.divider-line'),
+          { scaleX: 0, opacity: 0 },
           {
             scaleX: 1,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: divider,
-              start: "top 85%",
-              end: "top 65%",
-              scrub: 1
-            }
-          }
-        );
-        gsap.fromTo(divider.querySelector('h2'),
-          { opacity: 0, y: 20 },
-          {
-            opacity: 1, y: 0,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: divider,
-              start: "top 85%",
-              end: "top 75%",
-              scrub: 1
-            }
-          }
-        );
-      });
-
-      // 2. Parallax Leadership Cards
-      leadershipCardsRef.current.forEach((card, i) => {
-        if (!card) return;
-        gsap.fromTo(card,
-          { y: 100, opacity: 0 },
-          {
-            y: 0,
             opacity: 1,
-            ease: "back.out(1.5)",
+            duration: 1.2,
+            ease: "power3.out",
             scrollTrigger: {
-              trigger: card,
+              trigger: divider,
               start: "top 90%",
-              end: "top 60%",
-              scrub: 1
+              end: "top 65%",
+              scrub: 0.5
             }
           }
         );
       });
 
-      // 3. Board Stagger Fade-in (No horizontal pin)
+      // 2. Board Members Entrance Animation
       if (boardRowRef.current) {
-        const boardItems = Array.from(boardRowRef.current.children);
-        
-        gsap.fromTo(boardItems,
-          { opacity: 0, scale: 0.8, y: 50 },
+        const cards = boardRowRef.current.children;
+        gsap.fromTo(
+          cards,
+          { opacity: 0, y: 50, scale: 0.9 },
           {
             opacity: 1,
-            scale: 1,
             y: 0,
+            scale: 1,
+            duration: 0.8,
             stagger: 0.1,
-            ease: "back.out(1.2)",
+            ease: "back.out(1.5)",
             scrollTrigger: {
               trigger: boardRowRef.current,
               start: "top 85%",
-              end: "top 60%",
-              scrub: 1
+              end: "top 55%",
+              scrub: 0.8
             }
           }
         );
       }
 
-      // 4. Domains Stagger Wipe
-      domainSectionsRef.current.forEach((domain, i) => {
+      // 3. Domain Columns Entrance Animation
+      domainSectionsRef.current.forEach((domain) => {
         if (!domain) return;
-        gsap.fromTo(domain,
-          { y: 150, opacity: 0 },
+
+        gsap.fromTo(
+          domain,
+          { opacity: 0, y: 60 },
           {
-            y: 0,
             opacity: 1,
-            ease: "power3.out",
+            y: 0,
+            duration: 1,
+            ease: "power2.out",
             scrollTrigger: {
               trigger: domain,
               start: "top 95%",
@@ -231,27 +180,11 @@ export function TeamSection() {
   }, []);
 
   return (
-    <section id="team" ref={containerRef} className="relative w-full min-h-screen pb-32 overflow-hidden" style={{ background: 'transparent' }}>
-      <div className="max-w-7xl mx-auto px-6">
+    <section id="team" ref={containerRef} className="relative w-full min-h-fit pb-16 overflow-hidden" style={{ background: 'transparent' }}>
+      <div className="max-w-[1530px] mx-auto px-4 sm:px-6">
         
-        {/* Tier 1: Leadership */}
-        <div ref={el => { dividersRef.current[0] = el; }} className="relative flex items-center justify-center mt-24 mb-16">
-          <div className="divider-line absolute w-full h-[1px] bg-gradient-to-r from-transparent via-[#FF6B1A] to-transparent opacity-50 shadow-[0_0_10px_#FF6B1A] origin-center" />
-          <h2 className="relative px-6 bg-[#050505] font-mono text-2xl tracking-widest text-[#FF6B1A] uppercase" style={{ textShadow: '0 0 15px rgba(255,107,26,0.6)' }}>
-            The Leadership
-          </h2>
-        </div>
-        <div className="flex flex-col md:flex-row justify-center items-center gap-16 md:gap-32">
-          <div ref={el => { leadershipCardsRef.current[0] = el; }}>
-            <PersonCard person={teamData.facultyCoordinator} size="large" />
-          </div>
-          <div ref={el => { leadershipCardsRef.current[1] = el; }}>
-            <PersonCard person={teamData.hod} size="large" />
-          </div>
-        </div>
-
-        {/* Tier 2: Board */}
-        <div ref={el => { dividersRef.current[1] = el; }} className="relative flex items-center justify-center mt-32 mb-16">
+        {/* Tier 1: Board */}
+        <div ref={el => { dividersRef.current[0] = el; }} className="relative flex items-center justify-center mt-12 mb-10">
           <div className="divider-line absolute w-full h-[1px] bg-gradient-to-r from-transparent via-[#FF6B1A] to-transparent opacity-50 shadow-[0_0_10px_#FF6B1A] origin-center" />
           <h2 className="relative px-6 bg-[#050505] font-mono text-2xl tracking-widest text-[#FF6B1A] uppercase" style={{ textShadow: '0 0 15px rgba(255,107,26,0.6)' }}>
             The Board
@@ -259,7 +192,7 @@ export function TeamSection() {
         </div>
         
         <div className="w-full relative py-10">
-          <div ref={boardRowRef} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-y-12 gap-x-6">
+          <div ref={boardRowRef} className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-y-12 gap-x-4 sm:gap-x-6">
             {teamData.boardMembers.map((member, i) => (
               <div key={i} className="flex justify-center">
                 <PersonCard person={member} size="medium" />
@@ -268,29 +201,31 @@ export function TeamSection() {
           </div>
         </div>
 
-        {/* Tier 3: Domains */}
-        <div ref={el => { dividersRef.current[2] = el; }} className="relative flex items-center justify-center mt-32 mb-24">
+        {/* Tier 2: Domains */}
+        <div ref={el => { dividersRef.current[1] = el; }} className="relative flex items-center justify-center mt-16 mb-12">
           <div className="divider-line absolute w-full h-[1px] bg-gradient-to-r from-transparent via-[#FF6B1A] to-transparent opacity-50 shadow-[0_0_10px_#FF6B1A] origin-center" />
           <h2 className="relative px-6 bg-[#050505] font-mono text-2xl tracking-widest text-[#FF6B1A] uppercase" style={{ textShadow: '0 0 15px rgba(255,107,26,0.6)' }}>
             The Domains
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 lg:gap-8 pt-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-14 lg:gap-8 xl:gap-12 pt-10">
           {teamData.domains.map((domain, i) => (
-            <div key={i} ref={el => { domainSectionsRef.current[i] = el; }} className="flex flex-col items-center">
-              <h4 className="font-mono text-lg text-white/50 uppercase tracking-widest mb-10 border-b border-[#FF6B1A]/20 pb-3 w-full text-center">
+            <div key={i} ref={el => { domainSectionsRef.current[i] = el; }} className="flex flex-col items-center w-full">
+              <h4 className="font-mono text-lg text-white/60 uppercase tracking-widest mb-8 border-b border-[#FF6B1A]/20 pb-3 w-full text-center">
                 {domain.domainName}
               </h4>
               
-              <div className="mb-10">
+              <div className="mb-8 flex justify-center w-full">
                 <PersonCard person={domain.head} size="medium" />
               </div>
               
-              <div className="flex justify-center gap-6 w-full">
-                {domain.leads.map((lead, j) => (
-                  <PersonCard key={j} person={lead} size="small" />
-                ))}
+              <div className="w-full flex justify-center items-start">
+                <div className={`w-full max-w-[330px] ${domain.leads.length > 1 ? 'grid grid-cols-2 gap-6 sm:gap-8' : 'flex justify-center'} justify-items-center`}>
+                  {domain.leads.map((lead, j) => (
+                    <PersonCard key={j} person={lead} size="small" />
+                  ))}
+                </div>
               </div>
             </div>
           ))}

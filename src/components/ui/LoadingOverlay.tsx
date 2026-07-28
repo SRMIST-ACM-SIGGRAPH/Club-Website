@@ -47,14 +47,14 @@ function project3D(
   perspective: number
 ): [number, number, number] {
   // Rotate around X axis
-  let y1 = y * Math.cos(rotX) - z * Math.sin(rotX);
-  let z1 = y * Math.sin(rotX) + z * Math.cos(rotX);
+  const y1 = y * Math.cos(rotX) - z * Math.sin(rotX);
+  const z1 = y * Math.sin(rotX) + z * Math.cos(rotX);
   // Rotate around Y axis
-  let x2 = x * Math.cos(rotY) + z1 * Math.sin(rotY);
-  let z2 = -x * Math.sin(rotY) + z1 * Math.cos(rotY);
+  const x2 = x * Math.cos(rotY) + z1 * Math.sin(rotY);
+  const z2 = -x * Math.sin(rotY) + z1 * Math.cos(rotY);
   // Rotate around Z axis
-  let x3 = x2 * Math.cos(rotZ) - y1 * Math.sin(rotZ);
-  let y3 = x2 * Math.sin(rotZ) + y1 * Math.cos(rotZ);
+  const x3 = x2 * Math.cos(rotZ) - y1 * Math.sin(rotZ);
+  const y3 = x2 * Math.sin(rotZ) + y1 * Math.cos(rotZ);
 
   const scale = perspective / (perspective + z2);
   return [x3 * scale, y3 * scale, scale];
@@ -105,7 +105,7 @@ export function LoadingOverlay() {
     let flashAlpha = 0;
 
     // ── Progress ticker ─────────────────────────────────────────────────────
-    let progressInterval = setInterval(() => {
+    const progressInterval = setInterval(() => {
       if (phase !== 'loading') return;
       const inc = Math.random() * 6 + 2;
       progress = Math.min(100, progress + inc);
@@ -114,7 +114,7 @@ export function LoadingOverlay() {
         phase = 'exploding';
         spawnParticles();
         // notify background logo to start animating
-        (window as any).__loaderComplete = true;
+        (window as unknown as { __loaderComplete: boolean }).__loaderComplete = true;
         window.dispatchEvent(new Event('loaderComplete'));
       }
     }, 55);

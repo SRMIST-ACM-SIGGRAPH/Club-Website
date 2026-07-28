@@ -18,6 +18,7 @@ export function ProjectsStack() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCurrentImageIndex(0);
   }, [selectedProject]);
   
@@ -32,7 +33,10 @@ export function ProjectsStack() {
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (!error && data) {
+      if (error) {
+        console.error('Supabase fetch error:', error);
+        console.error('Supabase URL configured:', !!process.env.NEXT_PUBLIC_SUPABASE_URL);
+      } else if (data) {
         setProjects(data);
       }
       setLoading(false);
