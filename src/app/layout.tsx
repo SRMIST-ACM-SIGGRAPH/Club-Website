@@ -5,6 +5,7 @@ import { PersistentBackgroundWrapper } from "@/components/3d/PersistentBackgroun
 import { Navbar } from "@/components/ui/Navbar";
 import { Footer } from "@/components/ui/Footer";
 import { LoadingOverlay } from "@/components/ui/LoadingOverlay";
+import { VirtualPet } from "@/components/ui/VirtualPet";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -46,6 +47,7 @@ export default function RootLayout({
             </main>
             <Footer />
           </div>
+          <VirtualPet />
         </LenisProvider>
       </body>
     </html>
