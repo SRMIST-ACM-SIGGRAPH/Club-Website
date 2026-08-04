@@ -95,7 +95,7 @@ export function AboutSection() {
             {/* Placeholder Image (Tech/Circuit themed) */}
             <div 
               className="absolute inset-0 bg-cover bg-center opacity-70 mix-blend-screen"
-              style={{ backgroundImage: "url('https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop')" }} 
+              style={{ backgroundImage: "url('/pix_hello.png')" }} 
             />
             
             {/* Subtle inner glowing vignette */}
