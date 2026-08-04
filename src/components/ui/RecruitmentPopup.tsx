@@ -3,17 +3,25 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-
-// -------------------------------------------------------------
-// TOGGLE THIS TO FALSE WHEN RECRUITMENTS ARE CLOSED
-const RECRUITMENT_OPEN = true;
-// -------------------------------------------------------------
+import recruitConfig from '../recruit/recruit.json';
 
 export function RecruitmentPopup() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isRecruitmentOpen, setIsRecruitmentOpen] = useState(false);
 
   useEffect(() => {
-    if (!RECRUITMENT_OPEN) return;
+    const now = new Date();
+    let open = false;
+    
+    if (recruitConfig.global_sync) {
+      open = recruitConfig.global_settings.is_open && new Date(recruitConfig.global_settings.deadline) > now;
+    } else {
+      open = Object.values(recruitConfig.domains).some(d => d.is_open && new Date(d.deadline) > now);
+    }
+    
+    setIsRecruitmentOpen(open);
+
+    if (!open) return;
     
     // Show popup after a short delay for better UX
     const timer = setTimeout(() => {
@@ -22,7 +30,7 @@ export function RecruitmentPopup() {
     return () => clearTimeout(timer);
   }, []);
 
-  if (!RECRUITMENT_OPEN) return null;
+  if (!isRecruitmentOpen) return null;
 
   return (
     <AnimatePresence>

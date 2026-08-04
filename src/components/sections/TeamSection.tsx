@@ -72,8 +72,8 @@ function PersonCard({ person, size = 'medium', className = '' }: { person: Perso
           } as React.CSSProperties}
         />
       </div>
-      <h3 className={`font-bold text-white tracking-wide whitespace-nowrap ${size === 'small' ? 'text-xs sm:text-sm md:text-base' : 'text-base md:text-lg'}`}>{person.name}</h3>
-      <p className="text-[#FF6B1A] font-mono text-xs md:text-sm tracking-wider mt-1 mb-3 whitespace-nowrap" style={{ textShadow: '0 0 10px rgba(255,107,26,0.5)' }}>{person.role}</p>
+      <h3 className={`font-bold text-white tracking-wide text-center leading-tight ${size === 'small' ? 'text-xs sm:text-sm md:text-base' : 'text-base md:text-lg'}`}>{person.name}</h3>
+      <p className="text-[#FF6B1A] text-center font-mono text-xs md:text-sm tracking-wider mt-1 mb-3" style={{ textShadow: '0 0 10px rgba(255,107,26,0.5)' }}>{person.role}</p>
       
       <div className="flex space-x-3 sm:space-x-4 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
         {person.socials.instagram && (
@@ -221,7 +221,7 @@ export function TeamSection() {
               </div>
               
               <div className="w-full flex justify-center items-start">
-                <div className={`w-full max-w-[330px] ${domain.leads.length > 1 ? 'grid grid-cols-2 gap-6 sm:gap-8' : 'flex justify-center'} justify-items-center`}>
+                <div className={`w-full max-w-[500px] px-2 ${domain.leads.length > 1 ? 'grid grid-cols-2 gap-x-12 gap-y-8 sm:gap-x-16 sm:gap-y-10' : 'flex justify-center'} justify-items-center`}>
                   {domain.leads.map((lead, j) => (
                     <PersonCard key={j} person={lead} size="small" />
                   ))}
