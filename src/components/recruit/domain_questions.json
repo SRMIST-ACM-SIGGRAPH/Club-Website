@@ -17,13 +17,6 @@
   ],
   "Corporate": [
     {
-      "id": "resume_linkedin",
-      "label": "Link to your Resume or LinkedIn",
-      "type": "url",
-      "required": true,
-      "placeholder": "https://linkedin.com/in/..."
-    },
-    {
       "id": "management_exp",
       "label": "Describe any past experience with event management or sponsorships",
       "type": "textarea",
@@ -54,13 +47,6 @@
       "type": "textarea",
       "required": true,
       "placeholder": "Computer Vision, Machine Learning, Computer Graphics, etc."
-    },
-    {
-      "id": "past_projects",
-      "label": "Link to any research papers, technical blogs, or past projects",
-      "type": "url",
-      "required": false,
-      "placeholder": "https://..."
     }
   ]
 }

@@ -72,7 +72,7 @@ export function ApplicationForm() {
     setIsLoadingAuth(true);
     try {
       const { data } = await supabase
-        .from('applications')
+        .from('temp_applications')
         .select('*')
         .eq('user_id', userId)
         .order('created_at', { ascending: false });
@@ -86,22 +86,9 @@ export function ApplicationForm() {
     }
   }, []);
 
-  // 1. Auth check
+  // 1. Auth check (Disabled for now to allow non-GitHub users)
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      if (session?.user) fetchApplications(session.user.id);
-      else setIsLoadingAuth(false);
-    }).catch(() => {
-      setIsLoadingAuth(false);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      if (session?.user) fetchApplications(session.user.id);
-    });
-
-    return () => subscription.unsubscribe();
+    setIsLoadingAuth(false);
   }, [fetchApplications]);
 
   // 2. Local Storage Sync (only if NOT editing)
@@ -174,11 +161,14 @@ export function ApplicationForm() {
     if (currentStep === 3) {
       if (!formData.domain_preference) { newErrors.domain_preference = "Please select a domain"; isValid = false; }
       
+      // Temporarily disabled why_join question
+      /*
       const charCount = formData.why_join.trim().length;
       if (charCount < 50 || charCount > 100) {
         newErrors.why_join = `Must be between 50 and 100 characters (Currently: ${charCount})`;
         isValid = false;
       }
+      */
       
       if (formData.domain_preference) {
         const questions = (domainQuestions as Record<string, {id: string, required?: boolean}[]>)[formData.domain_preference] || [];
@@ -214,13 +204,11 @@ export function ApplicationForm() {
 
   const submitApplication = async () => {
     if (!validateStep(3)) return;
-    if (!user) return;
 
     setIsSubmitting(true);
     
     const payload = {
-      user_id: user.id,
-      github_email: user.email, // Saves their primary GitHub email
+      // user_id and github_email removed since auth is disabled
       full_name: formData.full_name,
       srm_email: formData.srm_email,
       registration_number: formData.registration_number,
@@ -236,11 +224,11 @@ export function ApplicationForm() {
 
     if (formData.id) {
       // Editing existing
-      const res = await supabase.from('applications').update(payload).eq('id', formData.id);
+      const res = await supabase.from('temp_applications').update(payload).eq('id', formData.id);
       error = res.error;
     } else {
       // Inserting new
-      const res = await supabase.from('applications').insert([payload]);
+      const res = await supabase.from('temp_applications').insert([payload]);
       error = res.error;
     }
 
@@ -297,6 +285,15 @@ export function ApplicationForm() {
         }
       };
       frame();
+
+      // Automatically take them back to domain selection
+      const timer = setTimeout(() => {
+        setIsSuccess(false);
+        setStep(3);
+        setFormData(prev => ({ ...prev, domain_preference: '', domain_answers: {} }));
+      }, duration + 500);
+
+      return () => clearTimeout(timer);
     }
   }, [isSuccess]);
 
@@ -333,10 +330,14 @@ export function ApplicationForm() {
           Thank you for applying to SRMIST ACM SIGGRAPH. Your application has been secured in our system. We will reach out soon!
         </p>
         <button 
-          onClick={() => { setIsSuccess(false); fetchApplications(user!.id); }} 
+          onClick={() => { 
+            setIsSuccess(false); 
+            setStep(3);
+            setFormData(prev => ({ ...prev, domain_preference: '', domain_answers: {} }));
+          }} 
           className="px-8 py-4 bg-[#FF6B1A] text-black font-bold rounded-xl hover:bg-[#ffaa00] transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,107,26,0.3)]"
         >
-          View Dashboard
+          Apply for another domain
         </button>
       </motion.div>
     );
@@ -380,21 +381,6 @@ export function ApplicationForm() {
 
   return (
     <div className="max-w-2xl mx-auto mt-16 p-6 md:p-8 bg-[#050505]/80 backdrop-blur-md border border-white/10 rounded-2xl relative overflow-hidden">
-      {!user ? (
-        <div className="text-center py-12">
-          <h2 className="text-2xl font-bold text-white mb-4">Authentication Required</h2>
-          <p className="text-white/60 mb-8">To prevent spam, please authenticate with your GitHub account to start the application.</p>
-          <button 
-            onClick={handleLogin}
-            className="px-6 py-3 bg-white text-black font-bold rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center mx-auto gap-3 cursor-pointer"
-          >
-            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current">
-              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-            </svg>
-            Sign in with GitHub
-          </button>
-        </div>
-      ) : (
         <form onSubmit={handleFormSubmit}>
           <div className="flex justify-between items-center mb-8 pb-4 border-b border-white/10">
             <div>
@@ -405,9 +391,6 @@ export function ApplicationForm() {
                     &larr; Back to Dashboard
                   </button>
                 )}
-                <button type="button" onClick={handleSignOut} className="text-white/50 hover:text-white text-sm transition-colors">
-                  Sign out
-                </button>
               </div>
             </div>
             <div className="flex gap-2">
@@ -531,6 +514,8 @@ export function ApplicationForm() {
                     </div>
                   )}
 
+                  {/* Temporarily disabled why_join question */}
+                  {/*
                   <div>
                     <div className="flex justify-between items-end mb-1">
                       <label className="block text-white/70 text-sm">Why do you want to join? *</label>
@@ -547,6 +532,7 @@ export function ApplicationForm() {
                     />
                     {errors.why_join && <p className="text-red-400 text-xs mt-1">{errors.why_join}</p>}
                   </div>
+                  */}
                 </div>
               </motion.div>
             )}
@@ -570,7 +556,6 @@ export function ApplicationForm() {
             )}
           </div>
         </form>
-      )}
     </div>
   );
 }
