@@ -70,6 +70,16 @@ export function LoadingOverlay() {
 
   useEffect(() => {
     if (pathname === '/join') return;
+    // Turn off loading animation for now, but trigger the event so background starts
+    const bypassLoading = true as boolean;
+    if (bypassLoading) {
+      (window as unknown as { __loaderComplete: boolean }).__loaderComplete = true;
+      window.dispatchEvent(new Event('loaderComplete'));
+      setIsVisible(false);
+      return;
+    }
+
+    // Below code will be bypassed
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');

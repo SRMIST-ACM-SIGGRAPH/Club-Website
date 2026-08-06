@@ -115,7 +115,10 @@ export function AboutSection() {
             Our mission is to foster innovation by providing a collaborative platform where students can build, design, and explore the technologies that will shape tomorrow&apos;s digital experiences.
           </p>
           <div className="pt-4">
-            <button className="px-8 py-3 rounded-full bg-transparent border border-[#00ffcc] text-[#00ffcc] hover:bg-[#00ffcc] hover:text-[#050505] transition-all duration-300 font-mono text-sm uppercase tracking-wider font-bold">
+            <button 
+              onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
+              className="px-8 py-3 rounded-full bg-transparent border border-[#00ffcc] text-[#00ffcc] hover:bg-[#00ffcc] hover:text-[#050505] transition-all duration-300 font-mono text-sm uppercase tracking-wider font-bold"
+            >
               Discover Our Work
             </button>
           </div>
