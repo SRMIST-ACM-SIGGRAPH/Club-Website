@@ -1,0 +1,9 @@
+feat(auth,ui): migrate to SRM email OTP and upgrade Pix SVG
+
+- Replaced GitHub OAuth with Supabase Email OTP in ApplicationForm.
+- Enforced @srmist.edu.in domain validation for all registrations.
+- Redesigned the authentication UI to support multi-step email/OTP flow.
+- Completely overhauled Pix SVG in VirtualPet.
+- Added 3D radial gradients, glossy specular reflections to the head and eye.
+- Added detailed hoodie drawstrings and the iconic S logo on the chest.
+- Integrated floating geometric cubes around Pix's head to match the reference 3D render perfectly using pure SVG.

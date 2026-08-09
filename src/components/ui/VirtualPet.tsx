@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import Image from 'next/image';
 
 type PetState = 'IDLE' | 'WALK' | 'RUN' | 'CLIMB_LEFT' | 'CLIMB_RIGHT';
 
@@ -11,7 +10,6 @@ export function VirtualPet() {
   const [petState, setPetState] = useState<PetState>('IDLE');
   const [facingRight, setFacingRight] = useState(true);
   const [showMessage, setShowMessage] = useState(false);
-  const [imageError, setImageError] = useState(false);
   const [currentDuration, setCurrentDuration] = useState(2); // In seconds
   
   const currentPos = useRef({ x: 100, y: 0 });
@@ -102,7 +100,7 @@ export function VirtualPet() {
   };
 
   // Determine animation variants based on state
-  const getAnimationProps = () => {
+  const getAnimationProps = (): any => {
     switch (petState) {
       case 'WALK':
         return {
@@ -166,46 +164,104 @@ export function VirtualPet() {
           scaleX: facingRight ? 1 : -1
         }}
       >
-        {!imageError ? (
-          <Image
-            src="/pix/pix-front.png"
-            alt="Pix Virtual Pet"
-            fill
-            className="object-contain drop-shadow-2xl"
-            onError={() => setImageError(true)}
-            unoptimized // Just in case it's a GIF
-          />
-        ) : (
-          <PixFallbackSVG />
-        )}
+        <PixSVG />
       </motion.div>
     </motion.div>
   );
 }
 
-// A pure CSS/SVG fallback for Pix if the user hasn't uploaded the cropped image yet.
-const PixFallbackSVG = () => (
-  <svg width="80" height="100" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-    {/* Hoodie Body */}
-    <path d="M 20 80 Q 20 120 50 120 Q 80 120 80 80 L 80 70 L 20 70 Z" fill="#1A1A1A" />
-    <path d="M 10 75 Q -5 95 10 110 L 25 90 Z" fill="#FF8C00" /> {/* Left Arm */}
-    <path d="M 90 75 Q 105 95 90 110 L 75 90 Z" fill="#FF8C00" /> {/* Right Arm */}
-    {/* Flame Head */}
-    <path d="M 50 0 C 80 40 100 60 80 90 C 60 120 40 120 20 90 C 0 60 20 40 50 0 Z" fill="url(#flameGrad)" />
-    {/* Big Eye */}
-    <circle cx="50" cy="65" r="18" fill="white" />
-    <circle cx="50" cy="65" r="8" fill="#1A1A1A" />
-    <circle cx="53" cy="62" r="3" fill="white" />
-    {/* S Logo */}
-    <circle cx="50" cy="100" r="10" fill="#FF8C00" />
-    <path d="M 47 95 C 55 95 55 100 50 100 C 45 100 45 105 53 105" stroke="#1A1A1A" strokeWidth="2" fill="none" />
-    
+// Highly detailed 3D-like CSS/SVG representation of Pix
+const PixSVG = () => (
+  <svg width="100%" height="100%" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-2xl">
     <defs>
-      <linearGradient id="flameGrad" x1="50" y1="0" x2="50" y2="100" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#FFD700" />
-        <stop offset="0.5" stopColor="#FF8C00" />
-        <stop offset="1" stopColor="#FF4500" />
+      {/* Flame 3D Gradient */}
+      <radialGradient id="flameGrad" cx="40" cy="40" r="80" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#FFD34E" />
+        <stop offset="0.4" stopColor="#FF8B00" />
+        <stop offset="0.8" stopColor="#E65C00" />
+        <stop offset="1" stopColor="#B32400" />
+      </radialGradient>
+      
+      {/* Hoodie Gradient */}
+      <linearGradient id="hoodieGrad" x1="50" y1="70" x2="50" y2="120" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#2A2A2A" />
+        <stop offset="1" stopColor="#111111" />
+      </linearGradient>
+
+      {/* Eye Shadow Gradient */}
+      <radialGradient id="eyeShadow" cx="50" cy="60" r="22" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#FFFFFF" />
+        <stop offset="0.8" stopColor="#E0E0E0" />
+        <stop offset="1" stopColor="#A0A0A0" />
+      </radialGradient>
+      
+      {/* S Logo Gradient */}
+      <linearGradient id="sGrad" x1="0" y1="0" x2="1" y2="1">
+        <stop stopColor="#FF9900" />
+        <stop offset="1" stopColor="#FF5500" />
       </linearGradient>
     </defs>
+
+    {/* Floating Cubes (Left) */}
+    <rect x="15" y="25" width="4" height="4" fill="#FF8B00" transform="rotate(15 17 27)" opacity="0.8" />
+    <rect x="10" y="45" width="6" height="6" fill="#FF9900" transform="rotate(45 13 48)" opacity="0.6" />
+    <rect x="22" y="10" width="3" height="3" fill="#FF5500" transform="rotate(30 23 11)" opacity="0.9" />
+    
+    {/* Floating Cubes (Right) */}
+    <rect x="80" y="30" width="5" height="5" fill="#FF8B00" transform="rotate(25 82 32)" opacity="0.8" />
+    <rect x="85" y="55" width="4" height="4" fill="#FF9900" transform="rotate(60 87 57)" opacity="0.7" />
+
+    {/* Feet/Shoes */}
+    <rect x="35" y="112" width="12" height="6" rx="3" fill="#111111" />
+    <rect x="35" y="116" width="12" height="2" fill="#FF8B00" />
+    <rect x="53" y="112" width="12" height="6" rx="3" fill="#111111" />
+    <rect x="53" y="116" width="12" height="2" fill="#FF8B00" />
+
+    {/* Back of Hood */}
+    <path d="M 25 75 Q 50 65 75 75 Q 85 85 75 100 Q 50 110 25 100 Q 15 85 25 75 Z" fill="#0A0A0A" />
+
+    {/* Left Arm */}
+    <path d="M 28 85 Q 10 95 12 110" stroke="url(#hoodieGrad)" strokeWidth="12" strokeLinecap="round" />
+    {/* Right Arm */}
+    <path d="M 72 85 Q 90 95 88 110" stroke="url(#hoodieGrad)" strokeWidth="12" strokeLinecap="round" />
+
+    {/* Hands (Small flame colored blobs) */}
+    <circle cx="12" cy="110" r="5" fill="#FF8B00" />
+    <circle cx="88" cy="110" r="5" fill="#FF8B00" />
+
+    {/* Main Hoodie Body */}
+    <path d="M 30 75 L 70 75 Q 80 120 70 115 L 30 115 Q 20 120 30 75 Z" fill="url(#hoodieGrad)" />
+
+    {/* Drawstrings */}
+    <path d="M 40 78 Q 38 90 42 95" stroke="#333" strokeWidth="2" fill="none" strokeLinecap="round" />
+    <circle cx="42" cy="95" r="1.5" fill="#555" />
+    <path d="M 60 78 Q 62 90 58 95" stroke="#333" strokeWidth="2" fill="none" strokeLinecap="round" />
+    <circle cx="58" cy="95" r="1.5" fill="#555" />
+
+    {/* Flame Head (Main 3D Body) */}
+    <path d="M 50 5 C 85 35 95 65 75 90 C 60 105 40 105 25 90 C 5 65 15 35 50 5 Z" fill="url(#flameGrad)" />
+    
+    {/* Head Highlight (Glassy sheen on the top left) */}
+    <path d="M 50 12 C 30 35 22 55 27 75 C 22 55 35 30 50 12 Z" fill="#FFFFFF" opacity="0.3" />
+
+    {/* Big Eye Sclera */}
+    <circle cx="50" cy="62" r="22" fill="url(#eyeShadow)" />
+    
+    {/* Iris */}
+    <circle cx="50" cy="62" r="12" fill="#1A1A1A" />
+    <circle cx="50" cy="62" r="10" fill="#0A0A0A" />
+
+    {/* Specular Highlights on Eye */}
+    <ellipse cx="45" cy="57" rx="4" ry="6" fill="#FFFFFF" transform="rotate(-30 45 57)" opacity="0.9" />
+    <circle cx="54" cy="66" r="2" fill="#FFFFFF" opacity="0.6" />
+
+    {/* Mouth (Small smile) */}
+    <path d="M 44 92 Q 50 96 56 92" stroke="#B32400" strokeWidth="2" fill="none" strokeLinecap="round" />
+
+    {/* S Logo on Chest */}
+    <g transform="translate(40, 95) scale(0.2)">
+      <path d="M 60 20 C 20 20 20 50 50 50 C 80 50 80 80 40 80 C 30 80 20 75 15 70" stroke="url(#sGrad)" strokeWidth="15" fill="none" strokeLinecap="round" />
+      <circle cx="50" cy="50" r="45" stroke="url(#sGrad)" strokeWidth="8" fill="none" />
+    </g>
   </svg>
 );
