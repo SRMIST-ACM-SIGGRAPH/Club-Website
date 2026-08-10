@@ -50,6 +50,14 @@ export function ApplicationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   
+  // Auth state
+  const [authStep, setAuthStep] = useState<'email' | 'otp'>('email');
+  const [authEmail, setAuthEmail] = useState('');
+  const [authOtp, setAuthOtp] = useState('');
+  const [authError, setAuthError] = useState('');
+  const [isSendingOtp, setIsSendingOtp] = useState(false);
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
+  
   // Deadline & Open state
   const [isFormClosed, setIsFormClosed] = useState(false);
 
@@ -72,7 +80,7 @@ export function ApplicationForm() {
     setIsLoadingAuth(true);
     try {
       const { data } = await supabase
-        .from('temp_applications')
+        .from('applications')
         .select('*')
         .eq('user_id', userId)
         .order('created_at', { ascending: false });
@@ -86,9 +94,22 @@ export function ApplicationForm() {
     }
   }, []);
 
-  // 1. Auth check (Disabled for now to allow non-GitHub users)
+  // 1. Auth check
   useEffect(() => {
-    setIsLoadingAuth(false);
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      if (session?.user) fetchApplications(session.user.id);
+      else setIsLoadingAuth(false);
+    }).catch(() => {
+      setIsLoadingAuth(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      if (session?.user) fetchApplications(session.user.id);
+    });
+
+    return () => subscription.unsubscribe();
   }, [fetchApplications]);
 
   // 2. Local Storage Sync (only if NOT editing)
@@ -111,11 +132,42 @@ export function ApplicationForm() {
     }
   }, [formData]);
 
-  const handleLogin = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: 'github',
-      options: { redirectTo: `${window.location.origin}/join` }
+  const handleSendOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAuthError('');
+    if (!authEmail.trim().endsWith('@srmist.edu.in')) {
+      setAuthError('Only @srmist.edu.in email addresses are allowed.');
+      return;
+    }
+    setIsSendingOtp(true);
+    const { error } = await supabase.auth.signInWithOtp({
+      email: authEmail.trim(),
     });
+    setIsSendingOtp(false);
+    if (error) {
+      setAuthError(error.message);
+    } else {
+      setAuthStep('otp');
+    }
+  };
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAuthError('');
+    if (!authOtp || authOtp.length !== 6) {
+      setAuthError('Please enter a valid 6-digit code.');
+      return;
+    }
+    setIsVerifyingOtp(true);
+    const { error } = await supabase.auth.verifyOtp({
+      email: authEmail.trim(),
+      token: authOtp.trim(),
+      type: 'email'
+    });
+    setIsVerifyingOtp(false);
+    if (error) {
+      setAuthError(error.message);
+    }
   };
 
   const handleSignOut = async () => {
@@ -161,14 +213,11 @@ export function ApplicationForm() {
     if (currentStep === 3) {
       if (!formData.domain_preference) { newErrors.domain_preference = "Please select a domain"; isValid = false; }
       
-      // Temporarily disabled why_join question
-      /*
       const charCount = formData.why_join.trim().length;
       if (charCount < 50 || charCount > 100) {
         newErrors.why_join = `Must be between 50 and 100 characters (Currently: ${charCount})`;
         isValid = false;
       }
-      */
       
       if (formData.domain_preference) {
         const questions = (domainQuestions as Record<string, {id: string, required?: boolean}[]>)[formData.domain_preference] || [];
@@ -204,11 +253,13 @@ export function ApplicationForm() {
 
   const submitApplication = async () => {
     if (!validateStep(3)) return;
+    if (!user) return;
 
     setIsSubmitting(true);
     
     const payload = {
-      // user_id and github_email removed since auth is disabled
+      user_id: user.id,
+      github_email: user.email, // Saves their primary GitHub email
       full_name: formData.full_name,
       srm_email: formData.srm_email,
       registration_number: formData.registration_number,
@@ -224,11 +275,11 @@ export function ApplicationForm() {
 
     if (formData.id) {
       // Editing existing
-      const res = await supabase.from('temp_applications').update(payload).eq('id', formData.id);
+      const res = await supabase.from('applications').update(payload).eq('id', formData.id);
       error = res.error;
     } else {
       // Inserting new
-      const res = await supabase.from('temp_applications').insert([payload]);
+      const res = await supabase.from('applications').insert([payload]);
       error = res.error;
     }
 
@@ -285,15 +336,6 @@ export function ApplicationForm() {
         }
       };
       frame();
-
-      // Automatically take them back to domain selection
-      const timer = setTimeout(() => {
-        setIsSuccess(false);
-        setStep(3);
-        setFormData(prev => ({ ...prev, domain_preference: '', domain_answers: {} }));
-      }, duration + 500);
-
-      return () => clearTimeout(timer);
     }
   }, [isSuccess]);
 
@@ -330,14 +372,10 @@ export function ApplicationForm() {
           Thank you for applying to SRMIST ACM SIGGRAPH. Your application has been secured in our system. We will reach out soon!
         </p>
         <button 
-          onClick={() => { 
-            setIsSuccess(false); 
-            setStep(3);
-            setFormData(prev => ({ ...prev, domain_preference: '', domain_answers: {} }));
-          }} 
+          onClick={() => { setIsSuccess(false); fetchApplications(user!.id); }} 
           className="px-8 py-4 bg-[#FF6B1A] text-black font-bold rounded-xl hover:bg-[#ffaa00] transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,107,26,0.3)]"
         >
-          Apply for another domain
+          View Dashboard
         </button>
       </motion.div>
     );
@@ -381,6 +419,61 @@ export function ApplicationForm() {
 
   return (
     <div className="max-w-2xl mx-auto mt-16 p-6 md:p-8 bg-[#050505]/80 backdrop-blur-md border border-white/10 rounded-2xl relative overflow-hidden">
+      {!user ? (
+        <div className="max-w-md mx-auto py-12">
+          <h2 className="text-3xl font-black text-white mb-2 text-center">Join the Arena</h2>
+          <p className="text-white/60 mb-8 text-center text-sm">Enter your SRMIST email to securely log in or create an account.</p>
+          
+          {authStep === 'email' ? (
+            <form onSubmit={handleSendOtp} className="space-y-4">
+              <div>
+                <input 
+                  type="email" 
+                  placeholder="ab1234@srmist.edu.in" 
+                  value={authEmail} 
+                  onChange={(e) => setAuthEmail(e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-[#FF6B1A] transition-colors"
+                  required
+                />
+              </div>
+              {authError && <p className="text-red-400 text-sm">{authError}</p>}
+              <button 
+                type="submit" 
+                disabled={isSendingOtp || !authEmail}
+                className="w-full py-4 bg-[#FF6B1A] text-black font-bold rounded-xl hover:bg-[#ffaa00] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSendingOtp ? 'Sending Code...' : 'Send Verification Code'}
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleVerifyOtp} className="space-y-4">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm text-white/60">Sent to {authEmail}</span>
+                <button type="button" onClick={() => setAuthStep('email')} className="text-xs text-[#FF6B1A] hover:underline">Change</button>
+              </div>
+              <div>
+                <input 
+                  type="text" 
+                  placeholder="Enter 6-digit code" 
+                  value={authOtp} 
+                  onChange={(e) => setAuthOtp(e.target.value)}
+                  maxLength={6}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-[#FF6B1A] text-center tracking-widest text-xl transition-colors"
+                  required
+                />
+              </div>
+              {authError && <p className="text-red-400 text-sm">{authError}</p>}
+              <button 
+                type="submit" 
+                disabled={isVerifyingOtp || authOtp.length !== 6}
+                className="w-full py-4 bg-[#FF6B1A] text-black font-bold rounded-xl hover:bg-[#ffaa00] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isVerifyingOtp ? 'Verifying...' : 'Verify & Login'}
+              </button>
+            </form>
+          )}
+        </div>
+      ) : (
         <form onSubmit={handleFormSubmit}>
           <div className="flex justify-between items-center mb-8 pb-4 border-b border-white/10">
             <div>
@@ -391,6 +484,9 @@ export function ApplicationForm() {
                     &larr; Back to Dashboard
                   </button>
                 )}
+                <button type="button" onClick={handleSignOut} className="text-white/50 hover:text-white text-sm transition-colors">
+                  Sign out
+                </button>
               </div>
             </div>
             <div className="flex gap-2">
@@ -514,8 +610,6 @@ export function ApplicationForm() {
                     </div>
                   )}
 
-                  {/* Temporarily disabled why_join question */}
-                  {/*
                   <div>
                     <div className="flex justify-between items-end mb-1">
                       <label className="block text-white/70 text-sm">Why do you want to join? *</label>
@@ -532,7 +626,6 @@ export function ApplicationForm() {
                     />
                     {errors.why_join && <p className="text-red-400 text-xs mt-1">{errors.why_join}</p>}
                   </div>
-                  */}
                 </div>
               </motion.div>
             )}
@@ -556,6 +649,7 @@ export function ApplicationForm() {
             )}
           </div>
         </form>
+      )}
     </div>
   );
 }
