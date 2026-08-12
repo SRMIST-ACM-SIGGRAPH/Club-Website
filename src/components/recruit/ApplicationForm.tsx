@@ -205,8 +205,14 @@ export function ApplicationForm() {
         newErrors.srm_email = "Must be a valid @srmist.edu.in email";
         isValid = false;
       }
+      if (!formData.registration_number.trim()) { 
+        newErrors.registration_number = "Required"; 
+        isValid = false; 
+      } else if (formData.registration_number.trim().length !== 15) {
+        newErrors.registration_number = "Must be exactly 15 characters";
+        isValid = false;
+      }
       
-      if (!formData.registration_number.trim()) { newErrors.registration_number = "Required"; isValid = false; }
       if (!formData.phone_number.trim()) { newErrors.phone_number = "Required"; isValid = false; }
     }
 
