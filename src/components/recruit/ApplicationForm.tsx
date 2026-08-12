@@ -405,7 +405,7 @@ export function ApplicationForm() {
             <div key={app.id} className="p-4 border border-white/10 bg-white/5 rounded-xl flex justify-between items-center">
               <div>
                 <h3 className="text-lg text-[#FF6B1A] font-bold">{app.domain_preference}</h3>
-                <p className="text-white/50 text-sm">Submitted on {app.created_at ? new Date(app.created_at).toLocaleDateString() : 'Unknown date'}</p>
+                <p className="text-white/50 text-sm">Submitted on {app.created_at ? new Date(app.created_at).toLocaleDateString('en-GB') : 'Unknown date'}</p>
               </div>
               <button onClick={() => startEdit(app)} className="px-4 py-2 bg-white/10 text-white rounded hover:bg-white/20 transition-colors text-sm">
                 Edit
