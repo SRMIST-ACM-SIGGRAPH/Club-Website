@@ -25,7 +25,7 @@ const domains = [
   },
   {
     title: 'Media & PR',
-    description: 'Design UI/UX, edit videos, create 3D assets, and shape the visual identity.',
+    description: 'Handle public relations, social media strategy, content creation, and shape the club\'s visual identity.',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-10 h-10 text-[#FF6B1A]">
         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c1.38 0 2.5-1.12 2.5-2.5 0-.61-.23-1.18-.62-1.61-.38-.43-.61-1.02-.61-1.63 0-1.28 1.05-2.33 2.33-2.33h1.83c2.51 0 4.57-2.06 4.57-4.57C22 7.17 17.52 2 12 2z" />
