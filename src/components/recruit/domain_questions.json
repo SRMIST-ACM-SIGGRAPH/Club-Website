@@ -28,7 +28,7 @@
     {
       "id": "pr_portfolio_or_social",
       "label": "Link to your portfolio, past work, or social media handles you've managed",
-      "type": "url",
+      "type": "text",
       "required": true,
       "placeholder": "https://drive.google.com/... or @handle"
     },
