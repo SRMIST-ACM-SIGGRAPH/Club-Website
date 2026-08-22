@@ -24,7 +24,7 @@ const domains = [
     )
   },
   {
-    title: 'Creatives',
+    title: 'Media & PR',
     description: 'Design UI/UX, edit videos, create 3D assets, and shape the visual identity.',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-10 h-10 text-[#FF6B1A]">

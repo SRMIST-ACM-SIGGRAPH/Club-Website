@@ -189,7 +189,7 @@
       ]
     },
     {
-      "domainName": "Creatives",
+      "domainName": "Media & PR",
       "head": {
         "name": "Drishti Gupta",
         "photo": "/images/team/drishti_gupta.jpg",
@@ -202,13 +202,13 @@
       },
       "leads": [
         {
-          "name": "Cyan Benny",
-          "photo": "/images/team/cyan_benny.jpg",
+          "name": "Debadrita Halder",
+          "photo": "/images/team/debadrita_halder.jpg",
           "role": "Lead",
           "socials": {
-            "instagram": "https://www.instagram.com/cyan.benny",
-            "linkedin": "https://www.linkedin.com/in/cyan-benny-93664535b",
-            "github": "https://github.com/cyanbenny"
+            "instagram": "https://www.instagram.com/vangoghlovespasta",
+            "linkedin": "https://www.linkedin.com/in/debadritahalder",
+            "github": "https://github.com/debadritahalder-coder"
           }
         },
         {
