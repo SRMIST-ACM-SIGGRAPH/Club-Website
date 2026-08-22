@@ -26,18 +26,18 @@
   ],
   "Media & PR": [
     {
-      "id": "design_portfolio",
-      "label": "Link to your Behance, Dribbble, or Drive portfolio",
+      "id": "pr_portfolio_or_social",
+      "label": "Link to your portfolio, past work, or social media handles you've managed",
       "type": "url",
       "required": true,
-      "placeholder": "https://behance.net/..."
+      "placeholder": "https://drive.google.com/... or @handle"
     },
     {
-      "id": "software_skills",
-      "label": "Which creative software are you most proficient in?",
+      "id": "pr_skills",
+      "label": "What content creation or PR tools are you most proficient in?",
       "type": "text",
       "required": true,
-      "placeholder": "Figma, Blender, Premiere Pro, etc."
+      "placeholder": "Canva, Premiere Pro, Illustrator, Hootsuite, etc."
     }
   ],
   "R&D": [
