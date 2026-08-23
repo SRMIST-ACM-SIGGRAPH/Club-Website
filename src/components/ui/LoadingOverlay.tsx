@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
+import recruitConfig from '../recruit/recruit.json';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -70,8 +71,19 @@ export function LoadingOverlay() {
 
   useEffect(() => {
     if (pathname === '/join') return;
-    // Turn off loading animation for now, but trigger the event so background starts
-    const bypassLoading = true as boolean;
+    
+    // Check if recruitment is open to determine if we should bypass loading animation
+    const now = new Date();
+    let isRecruitmentOpen = false;
+    
+    if (recruitConfig.global_sync) {
+      isRecruitmentOpen = recruitConfig.global_settings.is_open && new Date(recruitConfig.global_settings.deadline) > now;
+    } else {
+      isRecruitmentOpen = Object.values(recruitConfig.domains).some(d => d.is_open && new Date(d.deadline) > now);
+    }
+
+    const bypassLoading = isRecruitmentOpen;
+    
     if (bypassLoading) {
       (window as unknown as { __loaderComplete: boolean }).__loaderComplete = true;
       window.dispatchEvent(new Event('loaderComplete'));
