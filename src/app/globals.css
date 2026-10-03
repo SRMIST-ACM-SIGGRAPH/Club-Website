@@ -42,6 +42,31 @@ h1, h2, h3, h4, h5, h6 {
     scrollbar-width: none;
 }
 
+/* Custom scrollbar themed to ACM SIGGRAPH orange aesthetic */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 140, 0, 0.4);
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 140, 0, 0.15);
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 140, 0, 0.8);
+  box-shadow: 0 0 12px rgba(255, 140, 0, 0.6);
+}
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 140, 0, 0.4) transparent;
+}
+
+
 @keyframes blob-spin {
   0%, 100% {
     border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;

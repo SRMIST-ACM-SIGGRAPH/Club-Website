@@ -12,7 +12,8 @@ The website leverages Next.js with the App Router to provide a fast, SEO-friendl
 
 The website is designed to be highly dynamic, pulling content from Supabase so the frontend code does not need constant updating.
 - **Projects (`ProjectsStack.tsx`)**: Fetches from a `projects` table. Renders an interactive, fan-out GSAP animation for project cards. Clicking a card expands a Framer Motion layout with an image carousel and tech stack details.
-- **Events (`EventsGrid.tsx`)**: Fetches from an `events` table to populate the club's event history. Modals support an optional external link (`link` column) for registrations, Devfolio pages, or external details. Run `update_events_schema.sql` to add the column if not present.
+- **Events (`EventsGrid.tsx`)**: Fetches from an `events` table to populate the club's event history. Modals support an optional external link (`link` column) for registrations, Devfolio pages, or external details.
+
 - **Production Domain**: Configured for `https://www.srmacmsiggraph.dev/` across SEO metadata, canonical links, robots, sitemap, and Supabase Auth redirect URLs.
 
 

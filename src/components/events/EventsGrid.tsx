@@ -141,10 +141,11 @@ export function EventsGrid() {
             
             <motion.div
               layoutId={`event-${selectedEvent.id}`}
+              data-lenis-prevent
               className="relative w-full max-w-4xl max-h-[88vh] bg-neutral-950 border border-orange-500/30 rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(249,115,22,0.15)] flex flex-col md:flex-row z-10"
             >
               {/* Left Side - Poster */}
-              <div className="relative w-full md:w-1/2 h-56 sm:h-72 md:h-auto md:min-h-[420px] shrink-0 self-stretch">
+              <div className="relative w-full md:w-1/2 h-52 sm:h-64 md:h-auto md:min-h-[420px] shrink-0 self-stretch">
                 <Image
                   src={selectedEvent.poster_url}
                   alt={selectedEvent.title}
@@ -156,16 +157,18 @@ export function EventsGrid() {
               </div>
 
               {/* Right Side - Details */}
-              <div className="flex-1 p-6 md:p-10 flex flex-col justify-between overflow-y-auto custom-scrollbar">
-                <div>
-                  <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
-                    <motion.span 
-                      layoutId={`event-date-${selectedEvent.id}`}
-                      className="inline-block text-orange-500 font-mono text-xs md:text-sm tracking-widest border border-orange-500/30 px-3 py-1 rounded-full bg-orange-500/10"
-                    >
-                      {new Date(selectedEvent.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-                    </motion.span>
-                  </div>
+              <div className="flex-1 p-6 md:p-8 flex flex-col min-h-0 overflow-hidden">
+                {/* Scrollable details container */}
+                <div 
+                  className="flex-1 min-h-0 overflow-y-auto overscroll-contain custom-scrollbar pr-2 md:pr-4"
+                  data-lenis-prevent
+                >
+                  <motion.span 
+                    layoutId={`event-date-${selectedEvent.id}`}
+                    className="inline-block text-orange-500 font-mono text-xs md:text-sm tracking-widest border border-orange-500/30 px-3 py-1 rounded-full bg-orange-500/10 mb-4"
+                  >
+                    {new Date(selectedEvent.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                  </motion.span>
                   
                   <motion.h3 
                     layoutId={`event-title-${selectedEvent.id}`}
@@ -174,34 +177,26 @@ export function EventsGrid() {
                     {selectedEvent.title}
                   </motion.h3>
 
-                  <div className="prose prose-invert prose-orange max-w-none">
+                  <div className="prose prose-invert prose-orange max-w-none pb-2">
                     <p className="text-neutral-300 text-sm md:text-base leading-relaxed whitespace-pre-wrap">
                       {selectedEvent.description}
                     </p>
                   </div>
                 </div>
 
-                {/* Event Link Section */}
+                {/* Event Link Section: Spanning across the modal */}
                 {selectedEvent.link && (
                   <motion.div 
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.15 }}
-                    className="mt-6 pt-5 border-t border-neutral-800/80 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3"
+                    className="pt-4 mt-3 border-t border-neutral-800/80 shrink-0 w-full"
                   >
-                    <div className="flex items-center gap-2 text-neutral-400 font-mono text-xs">
-                      <span className="w-2 h-2 rounded-full bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.8)] animate-pulse shrink-0" />
-                      <span className="text-neutral-400 shrink-0">SOURCE:</span>
-                      <span className="text-orange-400/90 underline decoration-orange-500/40 truncate max-w-[180px] sm:max-w-[220px]">
-                        {getDisplayHost(selectedEvent.link)}
-                      </span>
-                    </div>
-
                     <a
                       href={formatUrl(selectedEvent.link)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-400 text-black font-semibold text-sm tracking-wide transition-all shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.6)] active:scale-95 w-full sm:w-auto"
+                      className="w-full inline-flex items-center justify-center gap-2 py-3 px-6 rounded-xl bg-gradient-to-r from-orange-500 via-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-black font-bold text-sm tracking-wide shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.5)] transition-all duration-300 active:scale-[0.99]"
                     >
                       <span>Open Event Link</span>
                       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -213,6 +208,8 @@ export function EventsGrid() {
                   </motion.div>
                 )}
               </div>
+
+
 
               {/* Close Button */}
               <button
