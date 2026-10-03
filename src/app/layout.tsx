@@ -18,9 +18,27 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://www.srmacmsiggraph.dev'),
   title: "SRMIST ACM SIGGRAPH",
   description: "Official website for the SRMIST ACM SIGGRAPH Tech Club",
+  alternates: {
+    canonical: 'https://www.srmacmsiggraph.dev',
+  },
+  openGraph: {
+    title: "SRMIST ACM SIGGRAPH",
+    description: "Official website for the SRMIST ACM SIGGRAPH Tech Club",
+    url: 'https://www.srmacmsiggraph.dev',
+    siteName: 'SRMIST ACM SIGGRAPH',
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "SRMIST ACM SIGGRAPH",
+    description: "Official website for the SRMIST ACM SIGGRAPH Tech Club",
+  },
 };
+
 
 export default function RootLayout({
   children,

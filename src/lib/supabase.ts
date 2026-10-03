@@ -23,5 +23,7 @@ export type EventRecord = {
   description: string;
   date: string;
   poster_url: string;
+  link?: string | null;
   created_at: string;
 };
+

@@ -139,10 +139,17 @@ export function ApplicationForm() {
       setAuthError('Only @srmist.edu.in email addresses are allowed.');
       return;
     }
-    setIsSendingOtp(true);
+    const redirectUrl = typeof window !== 'undefined'
+      ? `${window.location.origin}/join`
+      : 'https://www.srmacmsiggraph.dev/join';
+
     const { error } = await supabase.auth.signInWithOtp({
       email: authEmail.trim(),
+      options: {
+        emailRedirectTo: redirectUrl,
+      },
     });
+
     setIsSendingOtp(false);
     if (error) {
       setAuthError(error.message);
