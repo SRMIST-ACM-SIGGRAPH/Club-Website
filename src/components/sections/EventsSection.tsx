@@ -1,4 +1,4 @@
-import { ComingSoonBanner } from '@/components/ui/ComingSoonBanner';
+import { EventsGrid } from '@/components/events/EventsGrid';
 
 export function EventsSection() {
   return (
@@ -15,7 +15,7 @@ export function EventsSection() {
         </div>
 
         {/* Dynamic Events Grid with Modals */}
-        <ComingSoonBanner message="Our team is currently organizing and planning upcoming events and meetups. Check back soon for official announcements!" />
+        <EventsGrid />
       </div>
 
       {/* Decorative blurry background element */}
