@@ -5,6 +5,7 @@ import { PersistentBackgroundWrapper } from "@/components/3d/PersistentBackgroun
 import { Navbar } from "@/components/ui/Navbar";
 import { Footer } from "@/components/ui/Footer";
 import { LoadingOverlay } from "@/components/ui/LoadingOverlay";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -64,6 +65,7 @@ export default function RootLayout({
             </main>
             <Footer />
           </div>
+          <Analytics />
         </LenisProvider>
       </body>
     </html>

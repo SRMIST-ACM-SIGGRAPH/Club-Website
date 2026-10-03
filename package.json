@@ -16,6 +16,7 @@
     "@studio-freight/lenis": "^1.0.42",
     "@supabase/supabase-js": "^2.109.0",
     "@types/three": "^0.185.0",
+    "@vercel/analytics": "^2.0.1",
     "canvas-confetti": "^1.9.4",
     "framer-motion": "^12.42.2",
     "gsap": "^3.15.0",
